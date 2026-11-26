@@ -12,8 +12,15 @@ enum Mode: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+enum Gender: String, CaseIterable, Identifiable {
+    case boy = "Maschietto", girl = "Femminuccia"
+    var id: String { rawValue }
+    var praise: String { self == .boy ? "Bravo" : "Brava" }
+}
+
 struct ContentView: View {
     @State private var playerName = ""
+    @State private var gender: Gender = .girl
     @State private var hasEnteredName = false
     @State private var mode: Mode = .words
     @State private var level = 1
@@ -105,6 +112,9 @@ struct ContentView: View {
                 .frame(maxWidth:360)
                 .multilineTextAlignment(.center)
                 .onSubmit { enterName() }
+            Picker("Sono…", selection:$gender) {
+                ForEach(Gender.allCases) { option in Text(option.rawValue).tag(option) }
+            }.pickerStyle(.segmented).frame(maxWidth:360)
             Text("Preparati a una super avventura di parole, sillabe e memoria!").multilineTextAlignment(.center).foregroundStyle(.secondary)
             Button { enterName() } label: {
                 Label("Andiamo!",systemImage:"sparkles").frame(maxWidth:.infinity)
@@ -182,7 +192,7 @@ struct ContentView: View {
             if completed {
                 VStack(spacing:14) {
                     Text("🏆").font(.system(size:62))
-                    Text("BRAVA/O, \(playerName.uppercased())!!").font(.system(size:34,weight:.black,design:.rounded)).multilineTextAlignment(.center).foregroundStyle(.orange)
+                    Text("\(gender.praise.uppercased()), \(playerName.uppercased())!").font(.system(size:34,weight:.black,design:.rounded)).multilineTextAlignment(.center).foregroundStyle(.orange)
                     Text("Hai completato la tua missione!").font(.title3.bold())
                     if mode == .memory {
                         Text("Risposte corrette: \(correct) su \(index)").font(.title2).foregroundStyle(.secondary)
@@ -190,9 +200,12 @@ struct ContentView: View {
                         Text("\(index) stimoli affrontati con coraggio!").font(.title2).foregroundStyle(.secondary)
                     }
                     Text(["Sei una forza! 🌟","Fantastico lavoro! 🚀","Ogni parola è una conquista! 🦄","Applausi per te! 👏"].randomElement() ?? "Sei una forza!").font(.headline)
-                    Button { showCelebration = false; completed = false; running = false } label: {
-                        Label("Ancora una partita!",systemImage:"arrow.clockwise").frame(maxWidth:.infinity)
+                    Button { showCelebration = false; start() } label: {
+                        Label("Ricomincia",systemImage:"arrow.clockwise").frame(maxWidth:.infinity)
                     }.buttonStyle(.borderedProminent).controlSize(.large).frame(maxWidth:320)
+                    Button { task?.cancel(); showCelebration = false; completed = false; running = false; visible = false; waiting = false } label: {
+                        Label("Torna alla home",systemImage:"house.fill").frame(maxWidth:.infinity)
+                    }.buttonStyle(.bordered).controlSize(.large).frame(maxWidth:320)
                 }.frame(maxWidth:.infinity,minHeight:300)
             } else if visible {
                 Text(current).font(.system(size:fontSize,weight:.bold,design:.rounded)).foregroundStyle(Color(red:0.15,green:0.22,blue:0.4)).minimumScaleFactor(0.4).lineLimit(1).frame(maxWidth:.infinity,minHeight:190)
@@ -248,10 +261,21 @@ struct ContentView: View {
             VStack(spacing:12) {
                 Text("🎊").font(.system(size:70))
                 Text("EVVIVAAA!").font(.system(size:38,weight:.black,design:.rounded)).foregroundStyle(.orange)
-                Text("BRAVA/O, \(playerName.uppercased())!!").font(.system(size:28,weight:.heavy,design:.rounded)).multilineTextAlignment(.center)
+                Text("\(gender.praise.uppercased()), \(playerName.uppercased())!").font(.system(size:28,weight:.heavy,design:.rounded)).multilineTextAlignment(.center)
             }.padding(34).background(.regularMaterial).clipShape(RoundedRectangle(cornerRadius:28)).scaleEffect(celebrationScale)
                 .animation(.spring(response:0.5,dampingFraction:0.55),value:celebrationScale)
-        }.onAppear { confetti = true; celebrationScale = 1 }
+        }.onAppear {
+            confetti = true
+            celebrationScale = 1
+            Task {
+                try? await Task.sleep(nanoseconds: 2_800_000_000)
+                await MainActor.run {
+                    withAnimation { showCelebration = false }
+                    confetti = false
+                    celebrationScale = 0.65
+                }
+            }
+        }
     }
 
     private func start() {
