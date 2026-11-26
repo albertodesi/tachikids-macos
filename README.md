@@ -41,3 +41,13 @@ The app is not code-signed or notarized. Gatekeeper may require opening it via r
 
 
 **Reading-vocabulary note:** the current dataset prioritizes the common-word subset and is grouped by estimated spelling complexity. It is not yet ranked by a primary-school reading corpus. Research notes and source limitations are documented in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
+
+## Web app (PWA)
+
+TachiKids is also available as a browser-based Progressive Web App, with no mandatory installation. It includes the three training modes (words, syllables and visual memory), adjustable exposure/pause/font size, ten vocabulary levels, session progress and a local last-session summary. The app is designed for mobile, tablet and desktop and caches its assets and vocabulary for offline use after the first successful load.
+
+- Open the GitHub Pages site: https://albertodesi.github.io/tachikids-macos/
+- On iPhone/iPad: open the link in Safari and use **Condividi → Aggiungi alla schermata Home** if you want an app-like shortcut.
+- Deployment is automatic through GitHub Actions on changes to `web/` or the vocabulary JSON. The first deployment may require enabling GitHub Pages with **Build and deployment → GitHub Actions** in repository Settings.
+
+The native SwiftUI macOS app remains available; the web app is an additional, install-free way to use TachiKids.
