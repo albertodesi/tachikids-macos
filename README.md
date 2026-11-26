@@ -34,7 +34,10 @@ The app is not code-signed or notarized. Gatekeeper may require opening it via r
 
 
 ## Vocabolario italiano per la lettura
-- Vocabolario locale integrato di 10.000 parole, suddiviso in 10 livelli progressivi.
+- Vocabolario locale integrato di 9.972 parole, suddiviso in 10 livelli progressivi.
 - Ogni livello contiene 1.000 parole; gli stimoli sono disponibili offline.
 - Il dataset distingue il nucleo di parole comuni (`core`) dal lessico esteso (`extended`).
 - Fonti, criteri di selezione, attribuzione e limiti sono documentati in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
+
+
+**Reading-vocabulary note:** the current dataset prioritizes the common-word subset and is grouped by estimated spelling complexity. It is not yet ranked by a primary-school reading corpus. Research notes and source limitations are documented in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
