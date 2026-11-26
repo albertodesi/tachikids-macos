@@ -46,4 +46,93 @@ async function loadWords(){try{const res=await fetch("./vocabulary/reading-vocab
 if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 function connection(){const el=$("connection");el.textContent=navigator.onLine?"● Online":"● Offline";el.classList.toggle("off",!navigator.onLine)}window.addEventListener("online",connection);window.addEventListener("offline",connection);connection();
 if(restoreProfile()){$("resumeBox").classList.remove("hidden");$("resumeName").textContent=state.name;$("resumeToken").textContent=state.profile.token}
+
+// --- Lettura ad alta voce: valutazione adulta + riconoscimento vocale opzionale ---
+Object.assign(state,{readings:[],recognition:null,readStart:null,transcript:"",speechStatus:""});
+const originalNext=next, originalFinish=finish;
+function speechConstructor(){return window.SpeechRecognition||window.webkitSpeechRecognition||null}
+function normalizeSpeech(value){return String(value||"").toLocaleLowerCase("it-IT").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z]/g,"")}
+function stopSpeech(){if(state.recognition){try{state.recognition.stop()}catch{}state.recognition=null}if(state.speechStatus==="listening")state.speechStatus="Ascolto terminato"}
+function startSpeech(){
+ const C=speechConstructor();if(!C)return;
+ try{
+  const rec=new C();state.recognition=rec;state.readStart=performance.now();state.speechStatus="listening";state.transcript="";
+  rec.lang="it-IT";rec.continuous=false;rec.interimResults=false;rec.maxAlternatives=3;
+  rec.onresult=e=>{const result=e.results[e.results.length-1];state.transcript=Array.from(result).map(x=>x.transcript).join(" / ");state.speechStatus="Riconoscimento completato";render()};
+  rec.onerror=e=>{state.speechStatus=e.error==="not-allowed"?"Permesso microfono negato. Puoi usare la valutazione manuale.":"Riconoscimento non riuscito. Riprova o usa la valutazione manuale.";render()};
+  rec.onend=()=>{if(state.speechStatus==="listening")state.speechStatus="Ascolto terminato";render()};
+  rec.start();render();
+ }catch(e){state.speechStatus="Impossibile avviare il microfono. Usa la valutazione manuale.";render()}
+}
+function assessReading(result){
+ if(state.answer)return;stopSpeech();
+ const elapsed=state.readStart?Math.round(performance.now()-state.readStart):null;
+ state.answer=result;state.readings.push({word:state.current,result,elapsedMs:elapsed,transcript:state.transcript||""});
+ if(result==="correct")state.correct++;render();
+}
+next=function(){
+ cancel();stopSpeech();
+ if(state.count&&state.index>=state.count){finish(true);return}
+ state.index++;state.answer=null;state.waiting=false;state.transcript="";state.speechStatus="";state.readStart=null;
+ const b=bank();if(!state.queue.length)state.queue=shuffle(b);
+ state.current=state.queue.shift();state.choices=shuffle([state.current,...shuffle(b.filter(w=>w!==state.current)).slice(0,3)]);
+ state.visible=true;render();
+ if(state.mode!=="reading")schedule(()=>{state.visible=false;state.waiting=true;render()},state.exposure);
+};
+render=function(){
+ const total=state.count?" / "+state.count:"";
+ $("progressLabel").textContent=state.name+", stimolo "+state.index+total;
+ $("progress").style.width=state.count?Math.min(100,state.index/state.count*100)+"%":"0%";
+ const stage=$("stage");stage.innerHTML="";
+ if(state.mode==="reading"){
+  const word=document.createElement("div");word.className="stimulus reading-word";word.textContent=state.current;word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);
+  const help=document.createElement("p");help.className="reading-help";help.textContent="Leggi la parola ad alta voce. Un adulto può valutare oppure usare il microfono.";stage.append(help);
+  const mic=document.createElement("button");mic.className="primary mic-button";mic.textContent=state.speechStatus==="listening"?"■ Ferma ascolto":(speechConstructor()?"🎙️ Leggi con il microfono":"Microfono non disponibile");mic.disabled=!speechConstructor()||!!state.answer;mic.onclick=()=>state.speechStatus==="listening"?stopSpeech():startSpeech();stage.append(mic);
+  if(state.speechStatus){const status=document.createElement("p");status.className="speech-status";status.textContent=state.speechStatus==="listening"?"Ti ascolto…":state.speechStatus;stage.append(status)}
+  if(state.transcript){const transcript=document.createElement("p");transcript.className="transcript";transcript.textContent="Trascrizione: "+state.transcript;stage.append(transcript);const matched=normalizeSpeech(state.transcript).split("/").some(x=>x.trim()===normalizeSpeech(state.current));const verdict=document.createElement("p");verdict.className="speech-status";verdict.textContent=matched?"La parola sembra corrispondere. L'adulto conferma la valutazione.":"La trascrizione non coincide: verifica l'ascolto e valuta manualmente.";stage.append(verdict)}
+  const label=document.createElement("p");label.className="reading-help";label.textContent="Valutazione dell'adulto";stage.append(label);
+  const controls=document.createElement("div");controls.className="reading-assessment";
+  [["correct","✓ Letta correttamente"],["assisted","◐ Con aiuto"],["retry","↻ Da riprovare"]].forEach(([value,text])=>{const button=document.createElement("button");button.className="option";button.textContent=text;button.disabled=!!state.answer;button.onclick=()=>assessReading(value);controls.append(button)});stage.append(controls);
+  if(state.answer){const feedback=document.createElement("p");feedback.className="feedback";feedback.textContent=state.answer==="correct"?"Ottimo!":state.answer==="assisted"?"Bene, con un piccolo aiuto.":"Riproveremo insieme.";stage.append(feedback);const nextButton=document.createElement("button");nextButton.className="next-button";nextButton.textContent="Prossima parola";nextButton.onclick=next;stage.append(nextButton)}
+  return;
+ }
+ if(state.waiting){const q=document.createElement("div");q.className="ready";q.textContent=state.mode==="syllables"?"Quale sillaba hai visto?":"Quale parola hai visto?";stage.append(q);const opts=document.createElement("div");opts.className="options";state.choices.forEach(word=>{const button=document.createElement("button");button.className="option";button.textContent=word;if(state.answer!==null){button.disabled=true;if(word===state.current)button.classList.add("correct");else if(word===state.answer)button.classList.add("wrong")}button.onclick=()=>choose(word);opts.append(button)});stage.append(opts);if(state.answer!==null){const feedback=document.createElement("div");feedback.className="feedback";feedback.textContent=state.answer===state.current?"Esatto! ⭐":"Quasi! La risposta era "+state.current;stage.append(feedback);const nextButton=document.createElement("button");nextButton.className="next-button";nextButton.textContent="Continua";nextButton.onclick=next;stage.append(nextButton)}return}
+ if(state.visible){const word=document.createElement("div");word.className="stimulus";word.textContent=state.current;word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word)}else{const ready=document.createElement("div");ready.className="ready";ready.textContent="Preparati…";stage.append(ready)}
+};
+finish=function(completed){
+ cancel();stopSpeech();state.visible=false;state.waiting=false;
+ if(completed&&state.index){
+  const p=state.profile;
+  if(state.mode==="reading"){
+   const correct=state.readings.filter(x=>x.result==="correct").length;
+   const assisted=state.readings.filter(x=>x.result==="assisted").length;
+   const retry=state.readings.filter(x=>x.result==="retry").length;
+   const times=state.readings.filter(x=>Number.isFinite(x.elapsedMs)).map(x=>x.elapsedMs);
+   const average=times.length?Math.round(times.reduce((a,b)=>a+b,0)/times.length):null;
+   p.sessions.push({date:new Date().toISOString(),mode:"reading",total:state.index,correct,assisted,retry,averageMicMs:average,readings:state.readings});
+   p.feedback="Lettura registrata. I tempi del microfono sono indicativi e non costituiscono una prova standardizzata.";
+   if(p.sessions.length>100)p.sessions=p.sessions.slice(-100);saveProfile();renderProfile();
+  }else{
+   const accuracy=Math.round(state.correct/state.index*100);
+   p.sessions.push({date:new Date().toISOString(),mode:state.mode,level:state.level,total:state.index,correct:state.correct,accuracy,exposure:state.exposure});
+   if(p.sessions.length>100)p.sessions=p.sessions.slice(-100);
+   if(accuracy>=90){p.goodStreak++;if(p.goodStreak>=2&&p.step<exposureSteps.length-1){p.step++;p.goodStreak=0;p.feedback="Ottimo lavoro: nel prossimo allenamento proverai un tempo leggermente più rapido."}else p.feedback="Ottimo risultato: ripeti ancora questo livello per consolidarlo."}
+   else if(accuracy<75){p.goodStreak=0;p.step=Math.max(0,p.step-1);p.feedback="Rallentiamo un po': consolidiamo il riconoscimento prima di accelerare."}
+   else{p.goodStreak=0;p.feedback="Buon allenamento: manteniamo questo ritmo e riproviamo."}
+   saveProfile();renderProfile();
+  }
+ }
+ renderResult(completed);
+};
+renderResult=function(completed){
+ const stage=$("stage");const reading=state.mode==="reading";
+ const correct=reading?state.readings.filter(x=>x.result==="correct").length:state.correct;
+ const assisted=reading?state.readings.filter(x=>x.result==="assisted").length:0;
+ const retry=reading?state.readings.filter(x=>x.result==="retry").length:0;
+ const times=reading?state.readings.filter(x=>Number.isFinite(x.elapsedMs)).map(x=>x.elapsedMs):[];
+ const average=times.length?times.reduce((a,b)=>a+b,0)/times.length:null;
+ stage.innerHTML='<div class="result"><div class="trophy">🏆</div><h2>'+(state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Hai completato la tua missione!":"Allenamento terminato!")+'</p><p>'+(reading?"Corrette: "+correct+" · Con aiuto: "+assisted+" · Da riprovare: "+retry:"Risposte corrette: "+correct+" su "+state.index)+'</p><p>'+(reading&&average!==null?"Tempo medio tra avvio microfono e trascrizione: "+(average/1000).toFixed(1)+" s. È una stima che include la latenza del riconoscimento, non una misura standardizzata.":escapeHtml(state.profile?.feedback||"Puoi riprendere quando vuoi."))+'</p><button class="primary" id="again">↻ Continua il percorso</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
+ $("again").onclick=()=>$("start").click();$("home").onclick=()=>{renderProfile();show("settings")};$("progress").style.width="100%";$("progressLabel").textContent="Missione conclusa";
+};
+
 loadWords();updateMode();
