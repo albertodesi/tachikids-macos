@@ -141,6 +141,7 @@ renderResult=function(completed){
  const times=reading?state.readings.filter(x=>Number.isFinite(x.elapsedMs)).map(x=>x.elapsedMs):[];
  const average=times.length?times.reduce((a,b)=>a+b,0)/times.length:null;
  stage.innerHTML='<div class="result"><div class="trophy">🏆</div><h2>'+(state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Hai completato la tua missione!":"Allenamento terminato!")+'</p><p>'+(reading?"Corrette: "+correct+" · Con aiuto: "+assisted+" · Da riprovare: "+retry:"Risposte corrette: "+correct+" su "+state.index)+'</p><p>'+(reading&&average!==null?"Tempo medio tra avvio microfono e trascrizione: "+(average/1000).toFixed(1)+" s. È una stima che include la latenza del riconoscimento, non una misura standardizzata.":escapeHtml(state.profile?.feedback||"Puoi riprendere quando vuoi."))+'</p><button class="primary" id="again">↻ Continua il percorso</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
+ addCelebration(stage);
  $("again").onclick=()=>$("start").click();$("home").onclick=()=>{renderProfile();show("settings")};$("progress").style.width="100%";$("progressLabel").textContent="Missione conclusa";
 };
 
@@ -249,7 +250,7 @@ finish=function(completed){
 renderResult=function(completed){
  if(state.mode!=="reading"){flashRenderResult(completed);return}
  const s=state.lastReadingSession||{};const stage=$("stage");
- stage.innerHTML='<div class="result"><div class="trophy">📖</div><h2>SESSIONE COMPLETATA</h2><p>Parole riconosciute: <strong>'+s.recognized+'</strong></p><p>Da verificare: <strong>'+(s.uncertain+s.unreviewed)+'</strong></p><p>Durata: <strong>'+((s.durationMs||0)/1000).toFixed(1)+' secondi</strong></p><p>La trascrizione automatica è indicativa. Rivedi il risultato e assegna una valutazione complessiva.</p><div class="reading-assessment"><button class="option" data-rating="fluent">✓ Lettura fluida</button><button class="option" data-rating="hesitant">◐ Qualche esitazione</button><button class="option" data-rating="practice">↻ Da consolidare</button></div><p id="ratingFeedback" class="feedback">'+(s.rating?"Valutazione: "+s.rating:"Scegli una valutazione per salvare l’esito.")+'</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
+ stage.innerHTML='<div class="result"><div class="trophy">🏆📖</div><h2>'+(state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>Missione di lettura completata!</p><p>Parole riconosciute: <strong>'+s.recognized+'</strong></p><p>Da verificare: <strong>'+(s.uncertain+s.unreviewed)+'</strong></p><p>Durata: <strong>'+((s.durationMs||0)/1000).toFixed(1)+' secondi</strong></p><p>La trascrizione automatica è indicativa. Rivedi il risultato e assegna una valutazione complessiva.</p><div class="reading-assessment"><button class="option" data-rating="fluent">✓ Lettura fluida</button><button class="option" data-rating="hesitant">◐ Qualche esitazione</button><button class="option" data-rating="practice">↻ Da consolidare</button></div><p id="ratingFeedback" class="feedback">'+(s.rating?"Valutazione: "+s.rating:"Scegli una valutazione per salvare l’esito.")+'</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
  stage.querySelectorAll("[data-rating]").forEach(button=>button.onclick=()=>{
   const labels={fluent:"Lettura fluida",hesitant:"Qualche esitazione",practice:"Da consolidare"};
   state.lastReadingSession.rating=labels[button.dataset.rating];
@@ -257,12 +258,32 @@ renderResult=function(completed){
   $("ratingFeedback").textContent="Valutazione salvata: "+state.lastReadingSession.rating;
   stage.querySelectorAll("[data-rating]").forEach(b=>b.classList.toggle("correct",b===button));
  });
+ addCelebration(stage);
  $("again").onclick=()=>{$("start").click()};
  $("home").onclick=()=>{state.readingWords=[];renderProfile();show("settings")};
  $("progress").style.width="100%";$("progressLabel").textContent="Sessione conclusa";
 };
 
 
+
+/* Festeggiamento finale condiviso tra tutte le modalità */
+function addCelebration(stage){
+ const layer=document.createElement("div");layer.className="celebration-confetti";layer.setAttribute("aria-hidden","true");
+ for(let i=0;i<42;i++){
+  const piece=document.createElement("i");piece.className="confetti-piece";
+  piece.style.setProperty("--x",(Math.random()*100)+"%");
+  piece.style.setProperty("--delay",(Math.random()*0.9)+"s");
+  piece.style.setProperty("--duration",(2.2+Math.random()*1.8)+"s");
+  piece.style.setProperty("--rotation",(Math.random()*720-360)+"deg");
+  piece.style.setProperty("--drift",(Math.random()*160-80)+"px");
+  piece.classList.add(["confetti-blue","confetti-orange","confetti-yellow","confetti-pink","confetti-green"][i%5]);
+  layer.append(piece);
+ }
+ stage.prepend(layer);
+ const result=stage.querySelector(".result");if(result)result.classList.add("celebration-result");
+ const trophy=stage.querySelector(".trophy");if(trophy)trophy.classList.add("trophy-bounce");
+ const heading=stage.querySelector("h2");if(heading)heading.classList.add("celebration-title");
+}
 /* Parole e sillabe: flusso automatico temporizzato, senza conferme */
 const continuousNext=next, continuousFinish=finish, continuousRender=render, continuousRenderResult=renderResult;
 let autoSequenceTimer=null;
@@ -310,7 +331,7 @@ finish=function(completed){
 renderResult=function(completed){
  if(state.mode==="reading"){continuousRenderResult(completed);return}
  const stage=$("stage");const mode=state.mode==="syllables"?"sillabe":"parole";
- stage.innerHTML='<div class="result"><div class="trophy">✨</div><h2>SEQUENZA COMPLETATA</h2><p>Hai visualizzato '+state.index+' '+mode+'.</p><p>Tempo di esposizione: '+state.exposure+' ms · Pausa: '+state.pause+' ms.</p><p>La sequenza è stata eseguita automaticamente, senza conferme o interruzioni.</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
+ stage.innerHTML='<div class="result"><div class="trophy">🏆✨</div><h2>'+(state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Missione completata!":"Hai fatto un bellissimo allenamento!")+'</p><p>Hai visualizzato '+state.index+' '+mode+'.</p><p>Tempo di esposizione: '+state.exposure+' ms · Pausa: '+state.pause+' ms.</p><p>La sequenza è stata eseguita automaticamente, senza conferme o interruzioni.</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
  $("again").onclick=()=>$("start").click();
  $("home").onclick=()=>{renderProfile();show("settings")};
  $("progress").style.width="100%";$("progressLabel").textContent="Sequenza conclusa";
