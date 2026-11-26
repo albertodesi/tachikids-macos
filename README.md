@@ -3,10 +3,12 @@
 Native SwiftUI macOS app for short visual-reading exercises for primary-school children.
 
 ## Features
-- Random words across five difficulty levels
+- Random words across ten progressively harder difficulty levels
 - Syllable-like letter groups from 2 to 5 characters
 - Visual-memory mode with multiple-choice recall
-- Adjustable exposure, pause, font size and session length
+- Editable timing fields for exposure, pause and font size
+- Player name and animated in-app celebration at the end of each session
+- Custom macOS app icon based on the in-app eye symbol
 - Local session summary
 
 ## Requirements
