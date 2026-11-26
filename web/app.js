@@ -135,4 +135,122 @@ renderResult=function(completed){
  $("again").onclick=()=>$("start").click();$("home").onclick=()=>{renderProfile();show("settings")};$("progress").style.width="100%";$("progressLabel").textContent="Missione conclusa";
 };
 
+
+// --- Lettura continua: una sola attivazione del microfono e valutazione finale ---
+const flashNext=next, flashFinish=finish, flashRenderResult=renderResult;
+Object.assign(state,{readingWords:[],readCursor:0,readingStartedAt:0,readingRecognitionActive:false,readingRecognition:null,readingResultIndex:0,readingLastTranscript:"",readingRating:null});
+function startRecognitionCycle(){
+ if(!state.readingRecognitionActive || state.readingRecognition)return;
+ const C=speechConstructor();
+ if(!C){state.speechStatus="Riconoscimento vocale non disponibile: puoi comunque usare la modalità di lettura con valutazione finale.";render();return}
+ try{
+  const rec=new C();state.readingRecognition=rec;rec.lang="it-IT";rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=3;
+  rec.onresult=e=>{
+   for(let i=e.resultIndex;i<e.results.length;i++){
+    const item=e.results[i];if(!item.isFinal)continue;
+    const transcript=Array.from(item).map(x=>x.transcript).join(" ").trim();
+    if(transcript)processReadingTranscript(transcript);
+    if(!state.readingRecognitionActive)return;
+   }
+  };
+  rec.onerror=e=>{
+   if(e.error==="not-allowed"||e.error==="service-not-allowed"){
+    state.readingRecognitionActive=false;state.speechStatus="Permesso microfono negato. Puoi concludere e valutare la sessione manualmente.";
+   }else state.speechStatus="Ascolto in ripristino…";
+   render();
+  };
+  rec.onend=()=>{
+   if(state.readingRecognition===rec)state.readingRecognition=null;
+   if(state.readingRecognitionActive){state.speechStatus="Ascolto attivo";setTimeout(startRecognitionCycle,250)}
+  };
+  rec.start();state.speechStatus="Ascolto attivo";
+ }catch(err){state.readingRecognition=null;if(state.readingRecognitionActive){state.speechStatus="Riprovo ad attivare l'ascolto…";setTimeout(startRecognitionCycle,500)}}
+}
+function processReadingTranscript(transcript){
+ if(!state.readingRecognitionActive)return;
+ state.readingLastTranscript=transcript;
+ const tokens=normalizeSpeech(transcript).split(" ").filter(Boolean);
+ for(const token of tokens){
+  if(state.readCursor>=state.readingWords.length)break;
+  // Cerca la parola attesa nei prossimi tre stimoli: il browser può restituire
+  // più parole insieme in un unico risultato finale.
+  let found=-1;
+  for(let j=state.readCursor;j<Math.min(state.readCursor+4,state.readingWords.length);j++){
+   if(normalizeSpeech(state.readingWords[j])===token){found=j;break}
+  }
+  if(found>=0){
+   while(state.readCursor<found){recordReadingWord("uncertain","Parola non rilevata con certezza")}
+   recordReadingWord("recognized",transcript);
+  }else{
+   recordReadingWord("uncertain",transcript);
+  }
+ }
+ if(state.readCursor>=state.readingWords.length){finish(true);return}
+ state.index=state.readCursor+1;state.current=state.readingWords[state.readCursor];render();
+}
+function recordReadingWord(status,transcript){
+ const word=state.readingWords[state.readCursor];
+ state.readings.push({word,status,transcript:transcript||""});state.readCursor++;
+}
+function stopContinuousRecognition(){
+ state.readingRecognitionActive=false;
+ const rec=state.readingRecognition;state.readingRecognition=null;
+ if(rec){rec.onend=null;try{rec.stop()}catch{}}
+}
+next=function(){
+ cancel();
+ if(state.mode!=="reading"){flashNext();return}
+ if(!state.readingWords.length){
+  const source=shuffle(bank());const amount=state.count>0?state.count:20;
+  state.readingWords=source.slice(0,Math.min(amount,source.length));
+  state.readCursor=0;state.readings=[];state.readingResultIndex=0;state.readingLastTranscript="";state.readingRating=null;state.readingStartedAt=performance.now();
+ }
+ if(state.readCursor>=state.readingWords.length){finish(true);return}
+ state.index=state.readCursor+1;state.current=state.readingWords[state.readCursor];state.visible=true;state.waiting=false;render();
+ if(!state.readingRecognitionActive){state.readingRecognitionActive=true;startRecognitionCycle()}
+};
+render=function(){
+ if(state.mode!=="reading"){const current=state.mode;state.mode=current;flashRender();return}
+ const total=state.readingWords.length||state.count||20;
+ $("progressLabel").textContent=state.name+" · parola "+Math.min(state.readCursor+1,total)+" / "+total;
+ $("progress").style.width=Math.min(100,state.readCursor/total*100)+"%";
+ const stage=$("stage");stage.innerHTML="";
+ const word=document.createElement("div");word.className="stimulus reading-word";word.textContent=state.current;word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);
+ const help=document.createElement("p");help.className="reading-help";help.textContent="Leggi ad alta voce e passa naturalmente alla parola successiva: TachiKids resta in ascolto.";stage.append(help);
+ const status=document.createElement("p");status.className="speech-status";status.textContent=state.speechStatus||"Attivazione del microfono…";stage.append(status);
+ const transcript=document.createElement("p");transcript.className="transcript";transcript.textContent=state.readingLastTranscript?"Ultimo riconoscimento: "+state.readingLastTranscript:"Il testo riconosciuto non viene conservato nel riepilogo.";stage.append(transcript);
+ const count=document.createElement("p");count.className="reading-help";count.textContent=state.readings.filter(x=>x.status==="recognized").length+" riconosciute · "+state.readings.filter(x=>x.status==="uncertain").length+" da verificare";stage.append(count);
+ const privacy=document.createElement("p");privacy.className="reading-help";privacy.textContent="Il microfono resta attivo durante la sessione. L'audio è gestito dal servizio di riconoscimento del browser; l'app non salva registrazioni.";stage.append(privacy);
+ const end=document.createElement("button");end.className="primary secondary";end.textContent="Termina e valuta la sessione";end.onclick=()=>finish(false);stage.append(end);
+};
+finish=function(completed){
+ cancel();
+ if(state.mode!=="reading"){flashFinish(completed);return}
+ stopContinuousRecognition();
+ // Le parole non raggiunte restano da verificare, non sono errori automatici.
+ while(state.readCursor<state.readingWords.length)recordReadingWord("unreviewed","");
+ state.index=state.readings.length;state.visible=false;state.waiting=false;
+ const recognized=state.readings.filter(x=>x.status==="recognized").length;
+ const uncertain=state.readings.filter(x=>x.status==="uncertain").length;
+ const unreviewed=state.readings.filter(x=>x.status==="unreviewed").length;
+ const session={date:new Date().toISOString(),mode:"reading",total:state.readings.length,recognized,uncertain,unreviewed,durationMs:Math.round(performance.now()-(state.readingStartedAt||performance.now())),rating:null,readings:state.readings.map(({word,status})=>({word,status}))};
+ if(state.profile){state.profile.sessions.push(session);if(state.profile.sessions.length>100)state.profile.sessions=state.profile.sessions.slice(-100);state.profile.feedback="Sessione di lettura registrata. La valutazione complessiva è a cura dell'adulto.";saveProfile();renderProfile()}
+ state.lastReadingSession=session;renderResult(completed);
+};
+renderResult=function(completed){
+ if(state.mode!=="reading"){flashRenderResult(completed);return}
+ const s=state.lastReadingSession||{};const stage=$("stage");
+ stage.innerHTML='<div class="result"><div class="trophy">📖</div><h2>SESSIONE COMPLETATA</h2><p>Parole riconosciute: <strong>'+s.recognized+'</strong></p><p>Da verificare: <strong>'+(s.uncertain+s.unreviewed)+'</strong></p><p>Durata: <strong>'+((s.durationMs||0)/1000).toFixed(1)+' secondi</strong></p><p>La trascrizione automatica è indicativa. Rivedi il risultato e assegna una valutazione complessiva.</p><div class="reading-assessment"><button class="option" data-rating="fluent">✓ Lettura fluida</button><button class="option" data-rating="hesitant">◐ Qualche esitazione</button><button class="option" data-rating="practice">↻ Da consolidare</button></div><p id="ratingFeedback" class="feedback">'+(s.rating?"Valutazione: "+s.rating:"Scegli una valutazione per salvare l’esito.")+'</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
+ stage.querySelectorAll("[data-rating]").forEach(button=>button.onclick=()=>{
+  const labels={fluent:"Lettura fluida",hesitant:"Qualche esitazione",practice:"Da consolidare"};
+  state.lastReadingSession.rating=labels[button.dataset.rating];
+  if(state.profile){const saved=state.profile.sessions[state.profile.sessions.length-1];if(saved&&saved.mode==="reading")saved.rating=state.lastReadingSession.rating;saveProfile()}
+  $("ratingFeedback").textContent="Valutazione salvata: "+state.lastReadingSession.rating;
+  stage.querySelectorAll("[data-rating]").forEach(b=>b.classList.toggle("correct",b===button));
+ });
+ $("again").onclick=()=>{$("start").click()};
+ $("home").onclick=()=>{state.readingWords=[];renderProfile();show("settings")};
+ $("progress").style.width="100%";$("progressLabel").textContent="Sessione conclusa";
+};
+
 loadWords();updateMode();
