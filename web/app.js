@@ -14,7 +14,7 @@ function isChildSafeWord(value){
 
 const hints=["Parole brevi e familiari","Parole quotidiane","Parole più lunghe","Parole articolate","Parole ricche di sillabe","Parole con gruppi consonantici","Parole impegnative","Parole molto complesse","Parole da veri esploratori","Sfida esperta: parole lunghissime!"];
 // Step temporali interni al gioco: non sono soglie cliniche né benchmark scientifici.
-const exposureSteps=[900,800,700,600,500,450];
+const exposureSteps=[2400,2200,2000,1800,1600,1400];
 function show(id){["welcome","settings","training"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function bank(){return state.mode==="syllables"?syllables[state.length]:banks[state.level-1].filter(isChildSafeWord)}
@@ -24,8 +24,9 @@ function notify(msg){$("toast").textContent=msg;$("toast").classList.add("show")
 function token(){return [...crypto.getRandomValues(new Uint8Array(5))].map(x=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[x%32]).join("")}
 function saveProfile(){if(!state.profile)return;localStorage.setItem(STORAGE_KEY,JSON.stringify(state.profile));}
 function loadProfile(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"null")}catch{return null}}
+function syncTimingDefaults(){const step=Math.max(0,Math.min(exposureSteps.length-1,state.profile?.step||0));const exposure=$("exposure");const pause=$("pause");if(exposure){exposure.value=String(exposureSteps[step]);$("exposureValue").textContent=(exposureSteps[step]/1000).toFixed(1)+" s"}if(pause){pause.value="1000";$("pauseValue").textContent="1.0 s"}}
 function updateMode(){const syl=state.mode==="syllables";$("levelRow").classList.toggle("hidden",syl);$("levelHint").classList.toggle("hidden",syl);$("lengthRow").classList.toggle("hidden",!syl);document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mode===state.mode));$("levelHint").textContent=hints[state.level-1]}
-function renderProfile(){if(!state.profile)return;$("profileToken").textContent=state.profile.token;$("pathStatus").textContent="Percorso "+(state.profile.step+1)+" di "+exposureSteps.length+" · esposizione "+exposureSteps[state.profile.step]+" ms";$("pathProgress").style.width=((state.profile.step+1)/exposureSteps.length*100)+"%";const last=state.profile.sessions.at(-1);$("lastSession").textContent=state.profile.sessions.length?"Sessioni completate: "+state.profile.sessions.length+" · ultima: "+(Number.isFinite(last.accuracy)?last.accuracy+"%":last.mode==="reading"?"lettura ad alta voce":last.mode==="syllables"?"sequenza sillabe":"sequenza parole"):"Il tuo percorso inizierà con la prima sessione."}
+function renderProfile(){if(!state.profile)return;syncTimingDefaults();$("profileToken").textContent=state.profile.token;$("pathStatus").textContent="Percorso "+(state.profile.step+1)+" di "+exposureSteps.length+" · esposizione "+exposureSteps[state.profile.step]+" ms";$("pathProgress").style.width=((state.profile.step+1)/exposureSteps.length*100)+"%";const last=state.profile.sessions.at(-1);$("lastSession").textContent=state.profile.sessions.length?"Sessioni completate: "+state.profile.sessions.length+" · ultima: "+(Number.isFinite(last.accuracy)?last.accuracy+"%":last.mode==="reading"?"lettura ad alta voce":last.mode==="syllables"?"sequenza sillabe":"sequenza parole"):"Il tuo percorso inizierà con la prima sessione."}
 function startProfile(name,gender){state.name=name;state.gender=gender;state.profile={token:token(),name,gender,step:0,goodStreak:0,sessions:[],created:new Date().toISOString()};saveProfile();$("hello").textContent="Pronti, "+name+"!";renderProfile();show("settings")}
 function restoreProfile(){const p=loadProfile();if(!p||!p.token||!Number.isInteger(p.step))return false;state.profile=p;state.name=p.name;state.gender=p.gender;return true}
 document.querySelectorAll("[data-gender]").forEach(b=>b.addEventListener("click",()=>{state.gender=b.dataset.gender;document.querySelectorAll("[data-gender]").forEach(x=>x.classList.toggle("selected",x===b))}));
@@ -36,7 +37,7 @@ $("newProfile").onclick=()=>{localStorage.removeItem(STORAGE_KEY);state.profile=
 $("changeName").onclick=()=>{show("welcome");$("playerName").value=state.name};
 document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{state.mode=b.dataset.mode;updateMode()});
 $("level").onchange=e=>{state.level=+e.target.value;updateMode()};$("length").onchange=e=>state.length=+e.target.value;
-$("start").onclick=()=>{if(!state.profile&&!restoreProfile()){notify("Crea prima il tuo profilo.");return}state.level=+$("level").value;state.length=+$("length").value;state.count=+$("count").value;state.exposure=exposureSteps[state.profile.step];state.pause=500;state.font=Math.max(36,Math.min(140,+$("fontSize").value||86));state.index=0;state.correct=0;state.sessionResults=[];state.readings=[];state.transcript="";state.speechStatus="";state.queue=shuffle(bank());show("training");next()};
+$("start").onclick=()=>{if(!state.profile&&!restoreProfile()){notify("Crea prima il tuo profilo.");return}state.level=+$("level").value;state.length=+$("length").value;state.count=+$("count").value;state.exposure=+$("exposure").value;state.pause=+$("pause").value;state.font=Math.max(36,Math.min(140,+$("fontSize").value||86));state.index=0;state.correct=0;state.sessionResults=[];state.readings=[];state.transcript="";state.speechStatus="";state.queue=shuffle(bank());show("training");next()};
 $("stop").onclick=()=>finish(false);
 function next(){cancel();if(state.count&&state.index>=state.count){finish(true);return}state.index++;state.answer=null;state.waiting=false;const b=bank();if(!state.queue.length)state.queue=shuffle(b);state.current=state.queue.shift();state.choices=shuffle([state.current,...shuffle(b.filter(w=>w!==state.current)).slice(0,3)]);state.visible=true;render();schedule(()=>{state.visible=false;state.waiting=true;render()},state.exposure)}
 function render(){const total=state.count?" / "+state.count:"";$("progressLabel").textContent=state.name+", stimolo "+state.index+total;$("progress").style.width=state.count?Math.min(100,state.index/state.count*100)+"%":"0%";const stage=$("stage");stage.innerHTML="";
@@ -315,4 +316,4 @@ renderResult=function(completed){
  $("progress").style.width="100%";$("progressLabel").textContent="Sequenza conclusa";
 };
 
-loadWords();updateMode();
+$("exposure").oninput=e=>$("exposureValue").textContent=(+e.target.value/1000).toFixed(1)+" s";$("pause").oninput=e=>$("pauseValue").textContent=(+e.target.value/1000).toFixed(1)+" s";syncTimingDefaults();loadWords();updateMode();
