@@ -354,16 +354,13 @@ render=function(){
  const total=state.count?" / "+state.count:"";
  $("progressLabel").textContent=state.name+", stimolo "+state.index+total;
  $("progress").style.width=state.count?Math.min(100,state.index/state.count*100)+"%":"0%";
+ const training=$("training");
+ training.classList.add("focus-sequence");
  const stage=$("stage");stage.innerHTML="";
  if(state.visible){
   const word=document.createElement("div");word.className="stimulus";word.textContent=state.current;
   word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);
- }else{
-  const ready=document.createElement("div");ready.className="ready";ready.textContent="Preparati…";stage.append(ready);
  }
- const hint=document.createElement("p");hint.className="reading-help";
- hint.textContent=state.mode==="syllables"?"Osserva e memorizza la sillaba: la sequenza prosegue automaticamente.":"Osserva e memorizza la parola: la sequenza prosegue automaticamente.";
- stage.append(hint);
 };
 finish=function(completed){
  if(state.mode==="reading"){continuousFinish(completed);return}
