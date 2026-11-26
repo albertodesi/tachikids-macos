@@ -1,0 +1,44 @@
+name: Build TachiKids for macOS
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Swift package
+        run: swift build -c release
+      - name: Package macOS app
+        run: |
+          APP="dist/TachiKids.app"
+          mkdir -p "$APP/Contents/MacOS"
+          cp ".build/release/TachiKids" "$APP/Contents/MacOS/TachiKids"
+          cat > "$APP/Contents/Info.plist" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+          <key>CFBundleName</key><string>TachiKids</string>
+          <key>CFBundleDisplayName</key><string>TachiKids</string>
+          <key>CFBundleIdentifier</key><string>it.tachikids.app</string>
+          <key>CFBundleVersion</key><string>2.0</string>
+          <key>CFBundleShortVersionString</key><string>2.0</string>
+          <key>CFBundlePackageType</key><string>APPL</string>
+          <key>LSMinimumSystemVersion</key><string>13.0</string>
+          </dict></plist>
+          PLIST
+          ditto -c -k --sequesterRsrc --keepParent "$APP" TachiKids-macOS.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TachiKids-macOS
+          path: TachiKids-macOS.zip
+          retention-days: 30
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TachiKids-macOS.zip
