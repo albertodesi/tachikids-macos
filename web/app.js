@@ -300,21 +300,37 @@ function getEncouragement(){
 }
 /* Festeggiamento finale condiviso tra tutte le modalità */
 function addCelebration(stage){
+ stage.classList.add("celebration-stage");
  const layer=document.createElement("div");layer.className="celebration-confetti";layer.setAttribute("aria-hidden","true");
- for(let i=0;i<42;i++){
+ const garland=document.createElement("div");garland.className="celebration-garland";
+ ["🎉","⭐","🎈","✦","🎊","⭐","🎈","✦","🎉"].forEach((symbol,index)=>{const flag=document.createElement("span");flag.className="garland-flag flag-"+(index%5);flag.textContent=symbol;garland.append(flag)});
+ layer.append(garland);
+ const burst=document.createElement("div");burst.className="celebration-burst";
+ for(let i=0;i<88;i++){
   const piece=document.createElement("i");piece.className="confetti-piece";
   piece.style.setProperty("--x",(Math.random()*100)+"%");
-  piece.style.setProperty("--delay",(Math.random()*0.9)+"s");
-  piece.style.setProperty("--duration",(2.2+Math.random()*1.8)+"s");
-  piece.style.setProperty("--rotation",(Math.random()*720-360)+"deg");
-  piece.style.setProperty("--drift",(Math.random()*160-80)+"px");
+  piece.style.setProperty("--delay",(Math.random()*1.15)+"s");
+  piece.style.setProperty("--duration",(2.5+Math.random()*2.2)+"s");
+  piece.style.setProperty("--rotation",(Math.random()*1080-540)+"deg");
+  piece.style.setProperty("--drift",(Math.random()*240-120)+"px");
+  piece.style.setProperty("--size",(6+Math.random()*9)+"px");
   piece.classList.add(["confetti-blue","confetti-orange","confetti-yellow","confetti-pink","confetti-green"][i%5]);
-  layer.append(piece);
+  burst.append(piece);
  }
- stage.prepend(layer);
+ for(let i=0;i<14;i++){
+  const star=document.createElement("b");star.className="celebration-star";star.textContent=i%2?"✦":"★";
+  star.style.setProperty("--sx",(Math.random()*100)+"%");
+  star.style.setProperty("--sd",(Math.random()*1.3)+"s");
+  star.style.setProperty("--ss",(18+Math.random()*22)+"px");
+  burst.append(star);
+ }
+ layer.append(burst);stage.prepend(layer);
  const result=stage.querySelector(".result");if(result)result.classList.add("celebration-result");
- const trophy=stage.querySelector(".trophy");if(trophy)trophy.classList.add("trophy-bounce");
+ const trophy=stage.querySelector(".trophy");if(trophy){trophy.classList.add("trophy-bounce");trophy.setAttribute("aria-hidden","true")}
  const heading=stage.querySelector("h2");if(heading)heading.classList.add("celebration-title");
+ const message=stage.querySelector(".encouragement-message");if(message)message.classList.add("encouragement-pop");
+ const kicker=document.createElement("div");kicker.className="celebration-kicker";kicker.textContent="✦ MISSIONE COMPIUTA! ✦";
+ if(result)result.insertBefore(kicker,result.querySelector("h2"));
 }
 /* Parole e sillabe: flusso automatico temporizzato, senza conferme */
 const continuousNext=next, continuousFinish=finish, continuousRender=render, continuousRenderResult=renderResult;
