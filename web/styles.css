@@ -20,3 +20,16 @@
 .transcript{padding:12px;border-radius:12px;background:#f3f7ff;color:#24344d;overflow-wrap:anywhere}
 
 .timing-settings{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0 8px}.timing-control{background:#f7f9fd;border:1px solid #e5ebf5;border-radius:14px;padding:13px}.timing-control>div{display:flex;justify-content:space-between;align-items:center;gap:8px}.timing-control label{font-size:13px;font-weight:800;color:var(--navy)}.timing-control strong{font-size:14px;color:var(--blue);white-space:nowrap}.timing-control input{display:block;width:100%;margin:13px 0 7px;accent-color:var(--blue)}.timing-control small{display:block;font-size:11px;line-height:1.4;color:var(--muted)}@media(max-width:520px){.timing-settings{grid-template-columns:1fr;gap:9px}.timing-control{padding:11px}}
+
+/* Celebration finale: coriandoli, festoni e animazioni */
+.celebration-result{position:relative;z-index:1;animation:celebration-arrive .7s cubic-bezier(.2,.9,.25,1.25) both}
+.celebration-title{animation:celebration-title .85s cubic-bezier(.2,.9,.25,1.35) both;text-shadow:0 5px 0 #ffe3bf,0 9px 22px #ffad4d55}
+.trophy-bounce{display:inline-block;animation:trophy-bounce 1.15s ease-in-out infinite}
+.celebration-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;min-height:100%;border-radius:22px}
+.confetti-piece{position:absolute;top:-18px;left:var(--x);width:9px;height:15px;border-radius:2px;opacity:0;animation:confetti-fall var(--duration) var(--delay) ease-in forwards}
+.confetti-blue{background:#3974df}.confetti-orange{background:#ff9b42}.confetti-yellow{background:#ffd34e}.confetti-pink{background:#ff78a8}.confetti-green{background:#35b887}
+@keyframes confetti-fall{0%{opacity:0;transform:translate3d(0,-15px,0) rotate(0)}10%{opacity:1}100%{opacity:.95;transform:translate3d(var(--drift),480px,0) rotate(var(--rotation))}}
+@keyframes celebration-arrive{0%{opacity:0;transform:translateY(28px) scale(.82)}65%{opacity:1;transform:translateY(-5px) scale(1.04)}100%{transform:translateY(0) scale(1)}}
+@keyframes celebration-title{0%{opacity:0;transform:scale(.55) rotate(-5deg)}65%{opacity:1;transform:scale(1.12) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes trophy-bounce{0%,100%{transform:translateY(0) rotate(-4deg) scale(1)}50%{transform:translateY(-12px) rotate(5deg) scale(1.12)}}
+@media(prefers-reduced-motion:reduce){.celebration-result,.celebration-title,.trophy-bounce,.confetti-piece{animation:none!important;opacity:1}}
