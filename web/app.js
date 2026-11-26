@@ -4,12 +4,20 @@ const STORAGE_KEY="tachikids-profile-v2";
 const state={name:"",gender:"girl",mode:"words",level:1,length:2,count:10,index:0,correct:0,visible:false,waiting:false,answer:null,current:"",choices:[],queue:[],timer:null,exposure:900,pause:500,font:86,profile:null,sessionResults:[]};
 const syllables={2:["MA","SO","LE","PA","TO","MI","LU","RE","CA","NO","BA","SI","FA","DO","TE","NI","PO","RA"],3:["TRA","SCA","GLO","PRE","CHI","GNE","FRA","SPE","CRI","DRO","GHI","ZZA","GLI","STR","SCI","CHE","GNA","TRO"],4:["STRA","GLIA","SCHE","CREI","TRAI","SQUI","GNEI","CHIO","SCIA","GLIO","GNOI","TRIE","CHIE","SCAI"],5:["SCHIA","STRIA","SCIAL","SQUAR","SCHIE","GLION","STRON","GHIAC","SCUOL","TRIAN"]};
 let banks=Array.from({length:10},()=>["CASA","SOLE","LUNA","PANE"]);
+/* Filtro prudenziale del lessico per la scuola primaria. */
+const childSafetyBlocked=["fumare","fumato","fumatore","fumatrice","fumatrici","fumatori","fumo","sigaretta","sigarette","sigaro","sigari","tabacco","alcool","alcolico","alcolici","ubriaco","ubriaca","ubriachi","ubriache","ubriacare","ubriacarsi","ubriachezza","droga","droghe","drogato","drogata","drogati","drogate","cocaina","eroina","marijuana","cannabis","hashish","spinello","spinelli","pornografia","pornografico","pornografica","porno","prostituta","prostituzione","puttana","puttane","puttaniere","cazzo","cazzi","stronzo","stronzi","stronza","stronze","merda","merde","vaffanculo","minchia","troia","troie","bastardo","bastarda","bastardi","bastarde","uccidere","ucciso","uccisa","uccisi","uccise","omicidio","omicidi","assassino","assassina","assassini","assassine","assassinare","stupro","stuprare","violentare","violenza","pistola","pistole","fucile","fucili","mitra","mitraglia","bomba","bombardare","bombardamento","esplosivo","esplosivi","suicidio","suicida","suicidarsi"];
+const childSafetyStems=["fumator","sigarett","tabacc","ubriac","drogat","cocain","eroin","marijuan","cannabis","hashish","spinell","pornograf","prostitu","puttan","cazz","stronz","merd","vaffancul","minchi","troi","bastard","omicid","assassin","stupra","violent","pistol","fucil","mitragli","bombard","esplosiv","suicid"];
+function isChildSafeWord(value){
+ const word=String(value||"").toLocaleLowerCase("it-IT").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+ return !childSafetyBlocked.includes(word)&&!childSafetyStems.some(stem=>word.includes(stem));
+}
+
 const hints=["Parole brevi e familiari","Parole quotidiane","Parole più lunghe","Parole articolate","Parole ricche di sillabe","Parole con gruppi consonantici","Parole impegnative","Parole molto complesse","Parole da veri esploratori","Sfida esperta: parole lunghissime!"];
 // Step temporali interni al gioco: non sono soglie cliniche né benchmark scientifici.
 const exposureSteps=[900,800,700,600,500,450];
 function show(id){["welcome","settings","training"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function bank(){return state.mode==="syllables"?syllables[state.length]:banks[state.level-1]}
+function bank(){return state.mode==="syllables"?syllables[state.length]:banks[state.level-1].filter(isChildSafeWord)}
 function cancel(){clearTimeout(state.timer)}
 function schedule(fn,ms){cancel();state.timer=setTimeout(fn,ms)}
 function notify(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
@@ -42,7 +50,7 @@ else{p.goodStreak=0;p.feedback="Buon allenamento: manteniamo questo ritmo e ripr
 saveProfile();renderProfile();}renderResult(completed)}
 function renderResult(completed){const stage=$("stage");const accuracy=state.index?Math.round(state.correct/state.index*100):0;stage.innerHTML='<div class="result"><div class="trophy">🏆</div><h2>'+ (state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Hai completato la tua missione!":"Allenamento terminato!")+'</p><p>Risposte corrette: '+state.correct+' su '+state.index+' ('+accuracy+'%)</p><p>'+escapeHtml(state.profile?.feedback||"Puoi riprendere quando vuoi.")+'</p><button class="primary" id="again">↻ Continua il percorso</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';$("again").onclick=()=>$("start").click();$("home").onclick=()=>{renderProfile();show("settings")};$("progress").style.width="100%";$("progressLabel").textContent="Missione conclusa"}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-async function loadWords(){try{const res=await fetch("./vocabulary/reading-vocabulary-it.json");if(!res.ok)throw Error("fetch");const entries=await res.json();if(entries.length<9000)throw Error("dataset");banks=Array.from({length:10},(_,i)=>entries.filter(x=>x.level===i+1).map(x=>x.word.toUpperCase()));}catch(e){notify("Vocabolario essenziale: controlla la connessione.")}}
+async function loadWords(){try{const res=await fetch("./vocabulary/reading-vocabulary-it.json");if(!res.ok)throw Error("fetch");const entries=await res.json();if(!entries.length)throw Error("dataset");banks=Array.from({length:10},(_,i)=>entries.filter(x=>x.level===i+1&&isChildSafeWord(x.word)).map(x=>x.word.toUpperCase()));}catch(e){notify("Vocabolario essenziale: controlla la connessione.")}}
 if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 function connection(){const el=$("connection");el.textContent=navigator.onLine?"● Online":"● Offline";el.classList.toggle("off",!navigator.onLine)}window.addEventListener("online",connection);window.addEventListener("offline",connection);connection();
 if(restoreProfile()){$("resumeBox").classList.remove("hidden");$("resumeName").textContent=state.name;$("resumeToken").textContent=state.profile.token}
