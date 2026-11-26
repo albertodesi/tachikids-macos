@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build app bundle and eye icon
-        run: ./build-app.sh
+        run: bash ./build-app.sh
       - name: Create ZIP
         run: ditto -c -k --sequesterRsrc --keepParent dist/TachiKids.app TachiKids-macOS.zip
       - uses: actions/upload-artifact@v4
