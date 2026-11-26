@@ -1,3 +1,4 @@
+// TachiKids browser application
 const $=id=>document.getElementById(id);
 const state={name:"",gender:"girl",mode:"words",level:1,length:2,count:20,index:0,correct:0,visible:false,waiting:false,answer:null,current:"",choices:[],queue:[],timer:null,exposure:600,pause:650,font:86};
 const syllables={2:["MA","SO","LE","PA","TO","MI","LU","RE","CA","NO","BA","SI","FA","DO","TE","NI","PO","RA"],3:["TRA","SCA","GLO","PRE","CHI","GNE","FRA","SPE","CRI","DRO","GHI","ZZA","GLI","STR","SCI","CHE","GNA","TRO"],4:["STRA","GLIA","SCHE","CREI","TRAI","SQUI","GNEI","CHIO","SCIA","GLIO","GNOI","TRIE","CHIE","SCAI"],5:["SCHIA","STRIA","SCIAL","SQUAR","SCHIE","GLION","STRON","GHIAC","SCUOL","TRIAN"]};
