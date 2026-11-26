@@ -8,3 +8,13 @@
 .path-progress span{transition:width .25s ease}
 .resume-box p{margin:6px 0 12px}
 .resume-box .text-button{display:block;margin:10px auto 0}
+
+
+/* Oral reading mode */
+.reading-word{margin:22px auto 12px}
+.reading-help,.speech-status,.transcript{text-align:center;max-width:620px;margin:12px auto;color:#53647c;line-height:1.5}
+.mic-button{margin:12px auto;min-width:220px}
+.reading-assessment{display:grid;grid-template-columns:1fr;gap:10px;max-width:520px;margin:12px auto}
+.reading-assessment .option{min-height:48px}
+.speech-status{font-weight:600}
+.transcript{padding:12px;border-radius:12px;background:#f3f7ff;color:#24344d;overflow-wrap:anywhere}
