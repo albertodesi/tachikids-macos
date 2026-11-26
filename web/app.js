@@ -253,4 +253,58 @@ renderResult=function(completed){
  $("progress").style.width="100%";$("progressLabel").textContent="Sessione conclusa";
 };
 
+
+/* Parole e sillabe: flusso automatico temporizzato, senza conferme */
+const continuousNext=next, continuousFinish=finish, continuousRender=render, continuousRenderResult=renderResult;
+let autoSequenceTimer=null;
+function clearAutoSequence(){if(autoSequenceTimer){clearTimeout(autoSequenceTimer);autoSequenceTimer=null}}
+function autoAdvance(){
+ clearAutoSequence();
+ if(state.mode==="reading"){continuousNext();return}
+ if(state.count&&state.index>=state.count){finish(true);return}
+ state.index++;state.answer=null;state.waiting=false;
+ const b=bank();if(!state.queue.length)state.queue=shuffle(b);
+ state.current=state.queue.shift();state.visible=true;render();
+ autoSequenceTimer=setTimeout(()=>{
+  state.visible=false;render();
+  autoSequenceTimer=setTimeout(()=>autoAdvance(),Math.max(150,state.pause||500));
+ },Math.max(250,state.exposure||900));
+}
+next=function(){if(state.mode==="reading"){continuousNext();return}autoAdvance()};
+render=function(){
+ if(state.mode==="reading"){continuousRender();return}
+ const total=state.count?" / "+state.count:"";
+ $("progressLabel").textContent=state.name+", stimolo "+state.index+total;
+ $("progress").style.width=state.count?Math.min(100,state.index/state.count*100)+"%":"0%";
+ const stage=$("stage");stage.innerHTML="";
+ if(state.visible){
+  const word=document.createElement("div");word.className="stimulus";word.textContent=state.current;
+  word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);
+ }else{
+  const ready=document.createElement("div");ready.className="ready";ready.textContent="Preparati…";stage.append(ready);
+ }
+ const hint=document.createElement("p");hint.className="reading-help";
+ hint.textContent=state.mode==="syllables"?"Osserva e memorizza la sillaba: la sequenza prosegue automaticamente.":"Osserva e memorizza la parola: la sequenza prosegue automaticamente.";
+ stage.append(hint);
+};
+finish=function(completed){
+ if(state.mode==="reading"){continuousFinish(completed);return}
+ clearAutoSequence();cancel();state.visible=false;state.waiting=false;
+ if(completed&&state.index&&state.profile){
+  const session={date:new Date().toISOString(),mode:state.mode,level:state.level,total:state.index,exposure:state.exposure,pause:state.pause,completed:true,scored:false};
+  state.profile.sessions.push(session);if(state.profile.sessions.length>100)state.profile.sessions=state.profile.sessions.slice(-100);
+  state.profile.feedback="Allenamento completato: "+state.index+" stimoli visualizzati in sequenza automatica.";
+  saveProfile();renderProfile();
+ }
+ renderResult(completed);
+};
+renderResult=function(completed){
+ if(state.mode==="reading"){continuousRenderResult(completed);return}
+ const stage=$("stage");const mode=state.mode==="syllables"?"sillabe":"parole";
+ stage.innerHTML='<div class="result"><div class="trophy">✨</div><h2>SEQUENZA COMPLETATA</h2><p>Hai visualizzato '+state.index+' '+mode+'.</p><p>Tempo di esposizione: '+state.exposure+' ms · Pausa: '+state.pause+' ms.</p><p>La sequenza è stata eseguita automaticamente, senza conferme o interruzioni.</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
+ $("again").onclick=()=>$("start").click();
+ $("home").onclick=()=>{renderProfile();show("settings")};
+ $("progress").style.width="100%";$("progressLabel").textContent="Sequenza conclusa";
+};
+
 loadWords();updateMode();
