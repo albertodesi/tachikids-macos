@@ -65,3 +65,7 @@
 @keyframes garland-sway{from{transform:rotate(calc(var(--tilt,0deg) - 7deg)) translateY(0)}to{transform:rotate(calc(var(--tilt,0deg) + 7deg)) translateY(4px)}}
 @media(max-width:520px){.celebration-stage{min-height:390px;padding:35px 0 16px}.celebration-result{padding:20px 12px 14px}.celebration-garland{left:-2%;right:-2%;top:-10px}.garland-flag{font-size:21px;width:27px}.celebration-kicker{font-size:10px;letter-spacing:1.2px}.encouragement-message{padding:11px 13px!important}}
 @media(prefers-reduced-motion:reduce){.celebration-garland,.garland-flag,.celebration-star,.celebration-result,.celebration-title,.trophy-bounce,.confetti-piece,.celebration-kicker,.encouragement-message{animation:none!important;opacity:1;transform:none}}
+
+/* Modalità Parole e Sillabe: nessuna distrazione sotto lo stimolo */
+.training.focus-sequence .training-bottom{display:none}
+.training.focus-sequence .stage{min-height:340px}
