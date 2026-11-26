@@ -200,7 +200,7 @@ function stopContinuousRecognition(){
 next=function(){
  cancel();
  if(state.mode!=="reading"){flashNext();return}
- if(!state.readingWords.length){
+ if(!state.readingWords.length||state.readCursor>=state.readingWords.length){
   const source=shuffle(bank());const amount=state.count>0?state.count:20;
   state.readingWords=source.slice(0,Math.min(amount,source.length));
   state.readCursor=0;state.readings=[];state.readingResultIndex=0;state.readingLastTranscript="";state.readingRating=null;state.readingStartedAt=performance.now();
