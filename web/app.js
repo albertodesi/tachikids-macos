@@ -332,6 +332,7 @@ renderResult=function(completed){
  if(state.mode==="reading"){continuousRenderResult(completed);return}
  const stage=$("stage");const mode=state.mode==="syllables"?"sillabe":"parole";
  stage.innerHTML='<div class="result"><div class="trophy">🏆✨</div><h2>'+(state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Missione completata!":"Hai fatto un bellissimo allenamento!")+'</p><p>Hai visualizzato '+state.index+' '+mode+'.</p><p>Tempo di esposizione: '+state.exposure+' ms · Pausa: '+state.pause+' ms.</p><p>La sequenza è stata eseguita automaticamente, senza conferme o interruzioni.</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
+ addCelebration(stage);
  $("again").onclick=()=>$("start").click();
  $("home").onclick=()=>{renderProfile();show("settings")};
  $("progress").style.width="100%";$("progressLabel").textContent="Sequenza conclusa";
