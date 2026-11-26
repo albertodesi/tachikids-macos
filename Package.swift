@@ -5,5 +5,5 @@ let package = Package(
     name: "TachiKids",
     platforms: [.macOS(.v13)],
     products: [.executable(name: "TachiKids", targets: ["TachiKids"])],
-    targets: [.executableTarget(name: "TachiKids")]
+    targets: [.executableTarget(name: "TachiKids", resources: [.process("Resources")])]
 )
