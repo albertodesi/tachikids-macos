@@ -268,7 +268,21 @@ renderResult=function(completed){
 
 /* Messaggi brevi e variabili per celebrare l'impegno del bambino */
 function getEncouragement(){
- const messages=[
+ const girl=state.gender!=="boy";
+ const messages=girl?[
+  "SUPER! Sei stata fantastica! 🌟",
+  "WOW! Che grande campionessa! 🚀",
+  "SPETTACOLARE! Hai dato il meglio! 🎉",
+  "MITICA! Continua così! 🏆",
+  "BRAVISSIMA! Ogni allenamento ti rende più forte! 💪",
+  "CHE FORZA! Hai fatto un lavoro grandioso! ⭐",
+  "EVVIVA! Un altro passo da campionessa! 🎈",
+  "FORMIDABILE! I tuoi progressi brillano! ✨",
+  "URRÀ! Sei una forza della natura! 🎊",
+  "GRANDE! Impegno da supereroina! 🦸",
+  "FANTASTICA! Applausi tutti per te! 👏",
+  "CHE SPETTACOLO! Sei una meraviglia! 🌈"
+ ]:[
   "SUPER! Sei stato fantastico! 🌟",
   "WOW! Che grande campione! 🚀",
   "SPETTACOLARE! Hai dato il meglio! 🎉",
