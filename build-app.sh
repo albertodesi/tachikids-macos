@@ -6,7 +6,7 @@ mkdir -p dist
 swift Scripts/make-icon.swift dist/TachiKids-icon.png
 ICONSET="dist/TachiKids.iconset"
 mkdir -p "$ICONSET"
-for spec in "16 16" "32 32" "32 64" "128 128" "128 256" "256 256" "256 512" "512 512" "512 1024"; do
+for spec in "16 16" "16 32" "32 32" "32 64" "128 128" "128 256" "256 256" "256 512" "512 512" "512 1024"; do
   set -- $spec
   size="$1"; pixels="$2"
   suffix=""
