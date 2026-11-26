@@ -13,8 +13,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build app bundle and eye icon
         run: bash ./build-app.sh
+      - name: Assemble distribution folder
+        run: |
+          mkdir -p dist/TachiKids-macOS
+          ditto dist/TachiKids.app dist/TachiKids-macOS/TachiKids.app
+          cp install-TachiKids.sh dist/TachiKids-macOS/install-TachiKids.sh
+          cp README-INSTALLAZIONE.txt dist/TachiKids-macOS/README-INSTALLAZIONE.txt
       - name: Create ZIP
-        run: ditto -c -k --sequesterRsrc --keepParent dist/TachiKids.app TachiKids-macOS.zip
+        run: ditto -c -k --sequesterRsrc --keepParent dist/TachiKids-macOS TachiKids-macOS.zip
       - uses: actions/upload-artifact@v4
         with:
           name: TachiKids-macOS
