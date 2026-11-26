@@ -109,7 +109,7 @@ finish=function(completed){
    const retry=state.readings.filter(x=>x.result==="retry").length;
    const times=state.readings.filter(x=>Number.isFinite(x.elapsedMs)).map(x=>x.elapsedMs);
    const average=times.length?Math.round(times.reduce((a,b)=>a+b,0)/times.length):null;
-   p.sessions.push({date:new Date().toISOString(),mode:"reading",total:state.index,correct,assisted,retry,averageMicMs:average,readings:state.readings});
+   p.sessions.push({date:new Date().toISOString(),mode:"reading",total:state.index,correct,assisted,retry,averageMicMs:average,readings:state.readings.map(({word,result,elapsedMs})=>({word,result,elapsedMs}))});
    p.feedback="Lettura registrata. I tempi del microfono sono indicativi e non costituiscono una prova standardizzata.";
    if(p.sessions.length>100)p.sessions=p.sessions.slice(-100);saveProfile();renderProfile();
   }else{
