@@ -14,6 +14,7 @@ enum Mode: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @State private var playerName = ""
+    @State private var hasEnteredName = false
     @State private var mode: Mode = .words
     @State private var level = 1
     @State private var length = 2
@@ -65,7 +66,7 @@ struct ContentView: View {
             LinearGradient(colors:[Color(red:0.91,green:0.95,blue:1),Color(red:1,green:0.96,blue:0.89)],startPoint:.topLeading,endPoint:.bottomTrailing).ignoresSafeArea()
             VStack(spacing:18) {
                 header
-                if playerName.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty {
+                if !hasEnteredName {
                     welcome
                 } else if running || completed {
                     training
@@ -98,13 +99,24 @@ struct ContentView: View {
         VStack(spacing:18) {
             Text("Ciao! 👋").font(.system(size:34,weight:.heavy,design:.rounded))
             Text("Come ti chiami?").font(.title2.bold())
-            TextField("Scrivi qui il tuo nome",text:$playerName).textFieldStyle(.roundedBorder).font(.title3).frame(maxWidth:360)
+            TextField("Scrivi qui il tuo nome",text:$playerName)
+                .textFieldStyle(.roundedBorder)
+                .font(.title3)
+                .frame(maxWidth:360)
                 .multilineTextAlignment(.center)
+                .onSubmit { enterName() }
             Text("Preparati a una super avventura di parole, sillabe e memoria!").multilineTextAlignment(.center).foregroundStyle(.secondary)
-            Button { playerName = playerName.trimmingCharacters(in:.whitespacesAndNewlines) } label: {
+            Button { enterName() } label: {
                 Label("Andiamo!",systemImage:"sparkles").frame(maxWidth:.infinity)
             }.buttonStyle(.borderedProminent).controlSize(.large).frame(maxWidth:320).disabled(playerName.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty)
         }.padding(34).frame(maxWidth:.infinity,minHeight:390).background(.white.opacity(0.94)).clipShape(RoundedRectangle(cornerRadius:24))
+    }
+
+    private func enterName() {
+        let cleaned = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleaned.isEmpty else { return }
+        playerName = cleaned
+        hasEnteredName = true
     }
 
     private var settings: some View {
@@ -112,7 +124,7 @@ struct ContentView: View {
             HStack {
                 Text("Pronti, \(playerName)!").font(.title2.bold())
                 Spacer()
-                Button("Cambia nome") { playerName = "" }.buttonStyle(.borderless)
+                Button("Cambia nome") { hasEnteredName = false }.buttonStyle(.borderless)
             }
             Picker("Modalità",selection:$mode) { ForEach(Mode.allCases) { Text($0.rawValue).tag($0) } }.pickerStyle(.segmented)
             if mode == .syllables {
