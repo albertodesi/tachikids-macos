@@ -75,3 +75,25 @@ Perciò TachiKids non dichiara un "tempo ideale" scientifico. Gli step temporali
 ### Ripresa del percorso e privacy
 
 Il profilo viene salvato in `localStorage` sul browser/dispositivo e identificato da un codice casuale di ripresa. Non c'è login, backend o sincronizzazione cloud. Il codice è un riferimento locale, **non** un account e non consente di recuperare il percorso su un altro dispositivo o browser. Cancellando i dati del sito si può perdere il percorso.
+
+
+## Modalità Lettura ad alta voce
+
+La modalità **Leggi ad alta voce** mostra una parola per volta e permette a un adulto di valutare:
+- letta correttamente;
+- letta con aiuto;
+- da riprovare.
+
+Nei browser che espongono `SpeechRecognition` (o `webkitSpeechRecognition`) è disponibile anche il microfono. La trascrizione viene confrontata con la parola mostrata, ma **non determina automaticamente il voto**: il riconoscimento vocale può sbagliare, soprattutto con voci di bambini, pronunce in apprendimento, rumore e parole poco comuni. L'adulto conferma sempre la valutazione.
+
+### Limiti tecnici e privacy del microfono
+
+La Web Speech API non è supportata in modo uniforme. L'interfaccia rileva la funzionalità a runtime e mantiene la valutazione manuale quando il browser non la espone. La disponibilità del riconoscimento vocale e del riconoscimento on-device varia tra browser e sistemi operativi: [MDN — SpeechRecognition](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition) e [MDN — riconoscimento on-device](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API#on-device_speech_recognition).
+
+Il riconoscimento standard può usare un servizio del browser e quindi inviare l'audio a un servizio remoto. TachiKids non registra né salva file audio; non conserva neppure la trascrizione nel profilo dopo la sessione. Prima di attivare il microfono, l'adulto deve leggere l'avviso e autorizzare l'uso. Non è corretto promettere che l'elaborazione sia sempre locale o offline.
+
+**Compatibilità pratica:** la modalità manuale è il fallback garantito. Il pulsante microfono appare attivo soltanto se il browser espone l'API; anche in quel caso, permessi e servizio di riconoscimento possono impedirne l'uso. Su iPhone/Safari va verificato sul dispositivo reale prima di considerarlo affidabile.
+
+### Come leggere i risultati
+
+I tempi mostrati sono una stima tra l'avvio del microfono e la restituzione della trascrizione: includono la latenza del servizio e non sono una misura standardizzata del tempo di lettura. Non vengono usati per far avanzare o retrocedere il percorso flash. Per misurare la fluenza in modo più attendibile servono protocolli controllati (brano, durata, parole corrette, errori e autocorrezioni), non il solo tempo di riconoscimento di una singola parola.
