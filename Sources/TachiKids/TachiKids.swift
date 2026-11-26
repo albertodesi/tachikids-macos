@@ -48,26 +48,64 @@ struct ContentView: View {
     @State private var celebrationScale = 0.65
     @State private var history: [(Date, Int, Int)] = []
 
-    private let banks: [[String]] = WordLibrary.load()
+    @State private var banks: [[String]] = WordLibrary.load()
 
     private enum WordLibrary {
-        private struct Entry: Decodable {
+        private struct Entry: Codable {
             let word: String
             let level: Int
             let syllables: Int
             let frequencyBand: String
         }
 
+        private static let remoteURL = URL(string: "https://raw.githubusercontent.com/albertodesi/tachikids-macos/main/Sources/TachiKids/Resources/reading-vocabulary-it.json")!
+
         static func load() -> [[String]] {
-            guard let url = Bundle.module.url(forResource: "reading-vocabulary-it", withExtension: "json"),
-                  let data = try? Data(contentsOf: url),
-                  let entries = try? JSONDecoder().decode([Entry].self, from: data) else {
-                assertionFailure("Vocabolario TachiKids non trovato o non valido")
-                return Array(repeating: ["CASA", "SOLE", "LUNA", "PANE"], count: 10)
+            if let cached = cachedData(), let entries = decode(cached) { return grouped(entries) }
+            if let url = Bundle.module.url(forResource: "reading-vocabulary-it", withExtension: "json"),
+               let data = try? Data(contentsOf: url), let entries = decode(data) {
+                return grouped(entries)
             }
-            return (1...10).map { level in
+            return Array(repeating: ["CASA", "SOLE", "LUNA", "PANE"], count: 10)
+        }
+
+        static func refresh() async -> [[String]]? {
+            do {
+                let (data, response) = try await URLSession.shared.data(from: remoteURL)
+                guard (response as? HTTPURLResponse)?.statusCode == 200,
+                      let entries = decode(data), entries.count >= 9_000 else { return nil }
+                try saveCache(data)
+                return grouped(entries)
+            } catch {
+                return nil
+            }
+        }
+
+        private static func decode(_ data: Data) -> [Entry]? {
+            try? JSONDecoder().decode([Entry].self, from: data)
+        }
+
+        private static func grouped(_ entries: [Entry]) -> [[String]] {
+            (1...10).map { level in
                 entries.filter { $0.level == level }.map { $0.word.uppercased() }
             }
+        }
+
+        private static func cacheURL() -> URL? {
+            FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+                .appendingPathComponent("TachiKids", isDirectory: true)
+                .appendingPathComponent("reading-vocabulary-it.json")
+        }
+
+        private static func cachedData() -> Data? {
+            guard let url = cacheURL() else { return nil }
+            return try? Data(contentsOf: url)
+        }
+
+        private static func saveCache(_ data: Data) throws {
+            guard let url = cacheURL() else { return }
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try data.write(to: url, options: .atomic)
         }
     }
 
@@ -95,6 +133,11 @@ struct ContentView: View {
             if showCelebration { celebrationOverlay }
         }
         .preferredColorScheme(.light)
+        .task {
+            if let updatedBanks = await WordLibrary.refresh() {
+                banks = updatedBanks
+            }
+        }
         .onDisappear { task?.cancel() }
         .onChange(of: exposure) { value in exposureText = String(Int(value)) }
         .onChange(of: pause) { value in pauseText = String(Int(value)) }
