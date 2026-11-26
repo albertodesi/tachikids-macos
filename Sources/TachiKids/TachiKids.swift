@@ -185,14 +185,37 @@ struct ContentView: View {
             } else if visible {
                 Text(current).font(.system(size:fontSize,weight:.bold,design:.rounded)).foregroundStyle(Color(red:0.15,green:0.22,blue:0.4)).minimumScaleFactor(0.4).lineLimit(1).frame(maxWidth:.infinity,minHeight:190)
             } else if mode == .memory && waiting {
-                Text("Quale parola hai visto?").font(.title2.bold())
-                LazyVGrid(columns:[GridItem(.flexible()),GridItem(.flexible())],spacing:12) {
-                    ForEach(choices,id:\.self) { choice in
-                        Button(choice) { choose(choice) }.buttonStyle(.borderedProminent).tint(answer == nil ? .blue : (choice == current ? .green : .gray)).disabled(answer != nil)
+                VStack(spacing:18) {
+                    Text("Quale parola hai visto?").font(.system(size:28,weight:.bold,design:.rounded))
+                    LazyVGrid(columns:[GridItem(.flexible(),spacing:16),GridItem(.flexible(),spacing:16)],spacing:16) {
+                        ForEach(choices,id:\.self) { choice in
+                            Button { choose(choice) } label: {
+                                Text(choice)
+                                    .font(.system(size:32,weight:.bold,design:.rounded))
+                                    .minimumScaleFactor(0.65)
+                                    .lineLimit(1)
+                                    .foregroundStyle(.white)
+                                    .frame(maxWidth:.infinity,minHeight:104)
+                                    .background(answer == nil ? Color(red:0.20,green:0.43,blue:0.82) : (choice == current ? Color(red:0.16,green:0.62,blue:0.38) : Color.gray.opacity(0.55)))
+                                    .clipShape(RoundedRectangle(cornerRadius:20))
+                                    .overlay(RoundedRectangle(cornerRadius:20).stroke(.white.opacity(0.8),lineWidth:2))
+                                    .shadow(color:.black.opacity(0.10),radius:5,y:3)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(answer != nil)
+                        }
+                    }
+                    if let answer {
+                        Text(answer == current ? "Esatto! ⭐" : "Quasi! La parola era \(current)")
+                            .font(.system(size:21,weight:.bold,design:.rounded))
+                            .foregroundStyle(answer == current ? .green : .orange)
+                    }
+                    if answer != nil {
+                        Button("Continua") { next() }
+                            .font(.title3.bold()).buttonStyle(.borderedProminent).controlSize(.large)
                     }
                 }
-                if let answer { Text(answer == current ? "Esatto! ⭐" : "Quasi! La parola era \(current)").font(.headline) }
-                if answer != nil { Button("Continua") { next() }.buttonStyle(.borderedProminent) }
+                .padding(.horizontal,8)
             } else {
                 Text("Preparati…").foregroundStyle(.secondary).font(.title2)
             }
