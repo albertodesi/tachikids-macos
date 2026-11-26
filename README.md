@@ -51,3 +51,27 @@ TachiKids is also available as a browser-based Progressive Web App, with no mand
 - Deployment is automatic through GitHub Actions on changes to `web/` or the vocabulary JSON. Before the first deployment, enable GitHub Pages manually in repository Settings → Pages → Build and deployment → **GitHub Actions**. The connected GitHub integration cannot enable this repository setting on your behalf.
 
 The native SwiftUI macOS app remains available; the web app is an additional, install-free way to use TachiKids.
+
+
+## Percorso adattivo e basi scientifiche
+
+La PWA propone un percorso di esposizione progressiva con sei step interni (900, 800, 700, 600, 500 e 450 ms). Questi valori sono **parametri sperimentali di prodotto**, scelti per rendere graduale l'esercizio: non sono soglie cliniche, né tempi ottimali stabiliti dalla letteratura.
+
+Ogni stimolo è seguito da una scelta a quattro alternative, così il sistema misura una risposta e può adattare il livello:
+- almeno 90% di risposte corrette per due sessioni consecutive: si avanza di uno step;
+- meno del 75%: si torna a uno step più lento;
+- tra 75% e 89%: si mantiene lo step.
+
+Le soglie 90%/75% e la regola delle due sessioni sono euristiche iniziali da validare con osservazioni d'uso; non sono cut-off diagnostici. Il punteggio non è una valutazione scolastica o clinica.
+
+### Cosa dice la letteratura (e cosa non dice)
+
+- Uno studio eye-tracking su bambini italiani di terza, quarta e quinta primaria ha osservato una prima fissazione media di circa 246, 227 e 199 ms rispettivamente, su parole derivate presentate in contesto. La durata della prima fissazione non equivale al tempo per cui un'app dovrebbe mostrare una parola. [Studio open access](https://pmc.ncbi.nlm.nih.gov/articles/PMC6279875/).
+- Nello stesso studio, la durata dello sguardo (gaze duration) era molto più lunga e dipendeva anche da lunghezza, frequenza e competenza di lettura. Questo conferma che non esiste un singolo tempo universale da applicare a ogni parola e bambino.
+- Le norme di fluenza su brani o liste (ad esempio sillabe/secondo o parole corrette al minuto) misurano una prestazione diversa dall'esposizione flash di parole. Non vanno convertite direttamente in millisecondi di presentazione. Un riferimento italiano di prove di lettura è disponibile [qui (AIRIPA)](https://www.airipa.it/wp-content/uploads/2013/12/Articolo-percentili-Losito-Tressoldi-Cornoldi-1-1.pdf).
+
+Perciò TachiKids non dichiara un "tempo ideale" scientifico. Gli step temporali servono solo a strutturare un allenamento personalizzato; in futuro potranno essere calibrati con un campione più ampio, per classe, familiarità lessicale e accuratezza.
+
+### Ripresa del percorso e privacy
+
+Il profilo viene salvato in `localStorage` sul browser/dispositivo e identificato da un codice casuale di ripresa. Non c'è login, backend o sincronizzazione cloud. Il codice è un riferimento locale, **non** un account e non consente di recuperare il percorso su un altro dispositivo o browser. Cancellando i dati del sito si può perdere il percorso.
