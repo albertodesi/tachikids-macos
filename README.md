@@ -31,3 +31,10 @@ The app bundle is created at `dist/TachiKids.app`.
 Every push to `main` runs a macOS build. Download the ZIP from the Actions run's Artifacts section. Pushing a tag such as `v2.0.0` also creates a GitHub Release with the ZIP attached.
 
 The app is not code-signed or notarized. Gatekeeper may require opening it via right-click > Open. Signing and notarization require an Apple Developer ID.
+
+
+## Vocabolario italiano per la lettura
+- Vocabolario locale integrato di 10.000 parole, suddiviso in 10 livelli progressivi.
+- Ogni livello contiene 1.000 parole; gli stimoli sono disponibili offline.
+- Il dataset distingue il nucleo di parole comuni (`core`) dal lessico esteso (`extended`).
+- Fonti, criteri di selezione, attribuzione e limiti sono documentati in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
