@@ -428,3 +428,70 @@ main{display:block;padding:6px 0 24px}
  .settings-controls{grid-area:controls}
  .settings-actions{grid-area:actions}
 }
+
+
+/* Reachability fix: allow the settings page to scroll and keep Start in view */
+@media (min-width: 1000px) and (min-height: 700px) {
+  body {
+    height: auto;
+    min-height: 100svh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .app-shell {
+    height: auto;
+    min-height: 100svh;
+  }
+  main {
+    flex: 0 0 auto;
+    min-height: 0;
+    display: block;
+    overflow: visible;
+    padding: 0 0 24px;
+  }
+  #settings:not(.hidden) {
+    display: block;
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+  }
+  .panel {
+    max-height: none;
+    overflow: visible;
+  }
+  #settings .settings-actions {
+    padding-bottom: 4px;
+  }
+  #settings:not(.hidden) #start {
+    position: fixed;
+    z-index: 60;
+    left: 50%;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: min(420px, calc(100vw - 36px));
+    min-height: 68px;
+    box-shadow: 0 8px 28px #244b9b45;
+  }
+  #settings:not(.hidden) {
+    padding-bottom: 104px;
+  }
+}
+@media (max-width: 999px) {
+  #settings:not(.hidden) {
+    overflow: visible;
+    height: auto;
+    max-height: none;
+    padding-bottom: 112px;
+  }
+  #settings:not(.hidden) #start {
+    position: fixed;
+    z-index: 60;
+    left: 50%;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: calc(100vw - 28px);
+    min-height: 66px;
+    box-shadow: 0 8px 28px #244b9b45;
+  }
+}
