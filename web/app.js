@@ -269,33 +269,7 @@ renderResult=function(completed){
 /* Messaggi brevi e variabili per celebrare l'impegno del bambino */
 function getEncouragement(){
  const girl=state.gender!=="boy";
- const messages=girl?[
-  "SUPER! Sei stata fantastica! 🌟",
-  "WOW! Che grande campionessa! 🚀",
-  "SPETTACOLARE! Hai dato il meglio! 🎉",
-  "MITICA! Continua così! 🏆",
-  "BRAVISSIMA! Ogni allenamento ti rende più forte! 💪",
-  "CHE FORZA! Hai fatto un lavoro grandioso! ⭐",
-  "EVVIVA! Un altro passo da campionessa! 🎈",
-  "FORMIDABILE! I tuoi progressi brillano! ✨",
-  "URRÀ! Sei una forza della natura! 🎊",
-  "GRANDE! Impegno da supereroina! 🦸",
-  "FANTASTICA! Applausi tutti per te! 👏",
-  "CHE SPETTACOLO! Sei una meraviglia! 🌈"
- ]:[
-  "SUPER! Sei stato fantastico! 🌟",
-  "WOW! Che grande campione! 🚀",
-  "SPETTACOLARE! Hai dato il meglio! 🎉",
-  "MITICO! Continua così! 🏆",
-  "BRAVISSIMO! Ogni allenamento ti rende più forte! 💪",
-  "CHE FORZA! Hai fatto un lavoro grandioso! ⭐",
-  "EVVIVA! Un altro passo da campione! 🎈",
-  "FORMIDABILE! I tuoi progressi brillano! ✨",
-  "URRÀ! Sei una forza della natura! 🎊",
-  "GRANDE! Impegno da supereroe! 🦸",
-  "FANTASTICO! Applausi tutti per te! 👏",
-  "CHE SPETTACOLO! Sei una meraviglia! 🌈"
- ];
+ const messages=girl?["BRAVA","WOW","SUPER","MITICA","FANTASTICA","GRANDE","EVVIVA","FORMIDABILE","URRÀ","SPETTACOLARE"]:["BRAVO","WOW","SUPER","MITICO","FANTASTICO","GRANDE","EVVIVA","FORMIDABILE","URRÀ","SPETTACOLARE"];
  return messages[Math.floor(Math.random()*messages.length)];
 }
 /* Festeggiamento finale condiviso tra tutte le modalità */
@@ -304,7 +278,6 @@ function addCelebration(stage){
  const layer=document.createElement("div");layer.className="celebration-confetti";layer.setAttribute("aria-hidden","true");
  const garland=document.createElement("div");garland.className="celebration-garland";
  ["🎉","⭐","🎈","✦","🎊","⭐","🎈","✦","🎉"].forEach((symbol,index)=>{const flag=document.createElement("span");flag.className="garland-flag flag-"+(index%5);flag.textContent=symbol;garland.append(flag)});
- layer.append(garland);
  const burst=document.createElement("div");burst.className="celebration-burst";
  for(let i=0;i<88;i++){
   const piece=document.createElement("i");piece.className="confetti-piece";
@@ -324,7 +297,7 @@ function addCelebration(stage){
   star.style.setProperty("--ss",(18+Math.random()*22)+"px");
   burst.append(star);
  }
- layer.append(burst);stage.prepend(layer);
+ layer.append(burst);stage.prepend(layer);stage.append(garland);
  const result=stage.querySelector(".result");if(result)result.classList.add("celebration-result");
  const trophy=stage.querySelector(".trophy");if(trophy){trophy.classList.add("trophy-bounce");trophy.setAttribute("aria-hidden","true")}
  const heading=stage.querySelector("h2");if(heading)heading.classList.add("celebration-title");
@@ -376,7 +349,7 @@ finish=function(completed){
 renderResult=function(completed){
  if(state.mode==="reading"){continuousRenderResult(completed);return}
  const stage=$("stage");const mode=state.mode==="syllables"?"sillabe":"parole";
- stage.innerHTML='<div class="result"><div class="trophy">🏆✨</div><h2>'+(state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p class="encouragement-message">'+getEncouragement()+'</p><p>'+(completed?"Missione completata!":"Hai fatto un bellissimo allenamento!")+'</p><p>Hai visualizzato '+state.index+' '+mode+'.</p><p>Tempo di esposizione: '+state.exposure+' ms · Pausa: '+state.pause+' ms.</p><p>La sequenza è stata eseguita automaticamente, senza conferme o interruzioni.</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
+ stage.innerHTML='<div class="result"><div class="trophy">🏆✨</div><h2>'+getEncouragement()+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Missione completata!":"Hai fatto un bellissimo allenamento!")+'</p><p>Hai visualizzato '+state.index+' '+mode+'.</p><p>Tempo di esposizione: '+state.exposure+' ms · Pausa: '+state.pause+' ms.</p><p>La sequenza è stata eseguita automaticamente, senza conferme o interruzioni.</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';
  addCelebration(stage);
  $("again").onclick=()=>$("start").click();
  $("home").onclick=()=>{renderProfile();show("settings")};
