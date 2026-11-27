@@ -104,3 +104,78 @@
 
 /* TachiKids product foundations v19 */
 .content-filters{margin:18px 0;padding:16px;border:1px solid #e2eaf7;border-radius:18px;background:#f8faff}.filter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.filter-grid label,.table-tools label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800;color:var(--navy)}.filter-grid select,.table-tools select{min-width:0;width:100%;padding:10px;border:1px solid #dfe7f5;border-radius:10px;background:white;color:var(--navy);font:700 13px Nunito}.custom-toggle{display:flex;align-items:center;gap:8px;margin-top:13px;font-size:13px;font-weight:800;color:var(--navy)}.content-filters textarea{width:100%;margin-top:8px;padding:11px;border:1px solid #dfe7f5;border-radius:10px;font:600 13px Nunito;resize:vertical}.content-filters>small{display:block;margin-top:10px;color:var(--muted);font-size:11px}.table-tools{display:flex;align-items:end;justify-content:space-between;gap:10px;margin-top:12px}.reading-table-output{margin-top:14px;padding:12px;border:1px solid #dce6f6;border-radius:14px;background:white}.reading-table-grid{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:8px}.reading-table-grid span{display:grid;place-items:center;min-height:54px;padding:6px 2px;border-radius:8px;background:#f4f7fd;font-size:clamp(12px,3vw,19px);font-weight:900;overflow-wrap:anywhere}.table-actions{display:flex;justify-content:space-around;margin-top:12px}.progress-dashboard{margin:14px auto 0;padding:14px;border-radius:16px;background:#f4f7fd;text-align:left;color:var(--navy);font-size:13px}.dashboard-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.dashboard-metrics span{display:flex;flex-direction:column;gap:3px;text-align:center}.dashboard-metrics b{font-size:22px;color:var(--blue)}.dashboard-metrics small,.progress-dashboard>small{font-size:10px;color:var(--muted)}@media(max-width:520px){.filter-grid{grid-template-columns:1fr 1fr}.content-filters{padding:12px}}@media print{body *{visibility:hidden!important}.reading-table-output,.reading-table-output *{visibility:visible!important}.reading-table-output{position:absolute;inset:0;border:0}.reading-table-grid span{border:1px solid #999;background:white!important;color:black!important;min-height:100px;font-size:24px}}
+
+/* Desktop fit: target 13-inch MacBook viewport, mobile keeps natural scrolling */
+@media (min-width: 1000px) and (min-height: 700px) {
+ body{height:100vh;min-height:0;overflow:hidden;padding:8px 18px}
+ .app-shell{height:100%;min-height:0;max-width:1180px}
+ .topbar{padding:3px 4px 8px;flex:0 0 auto}
+ .brand{gap:9px}.brand-icon{width:39px;height:39px;font-size:28px}
+ .brand h1{font-size:21px}.brand p{font-size:10px}
+ .offline{font-size:10px;padding:5px 9px}
+ main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0}
+ .panel{width:100%;max-height:100%;padding:14px 18px;border-radius:19px;overflow:hidden}
+ .welcome{max-width:500px;padding:20px}
+ .mascot{font-size:46px}
+ .eyebrow{font-size:9px;letter-spacing:1.3px;margin:2px 0 5px}
+ .panel h2{font-size:24px;margin:0 0 10px}
+ .welcome input{font-size:16px;padding:10px}
+ .gender{margin:8px 0}
+ .choice{padding:8px 14px}
+ .primary{font-size:14px;padding:10px 17px;margin-top:7px;border-radius:11px}
+ .primary.full{margin-top:9px}
+ .section-heading h2{font-size:22px;margin:0}
+ .path-card,.resume-box{padding:8px 12px;margin:7px 0;border-radius:12px}
+ .path-card .muted{font-size:10px;margin:4px 0}
+ .path-progress{height:5px;margin:6px 0}
+ .mode-tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:7px 0}
+ .mode-tabs button{font-size:12px;padding:7px 4px;border-radius:9px}
+ .setting-row{margin:5px 0;font-size:12px}
+ .setting-row select{width:145px;padding:6px;font-size:11px}
+ .hint{font-size:10px;margin:-2px 0 4px}
+ .content-filters{margin:6px 0;padding:8px;border-radius:11px}
+ .content-filters .eyebrow{margin:0 0 4px}
+ .filter-grid{gap:5px}
+ .filter-grid label,.table-tools label{font-size:9px;gap:3px}
+ .filter-grid select,.table-tools select{padding:5px;font-size:10px;border-radius:7px}
+ .custom-toggle{font-size:9px;margin-top:5px;gap:5px}
+ .content-filters textarea{padding:5px;margin-top:3px;font-size:10px}
+ .content-filters>small{font-size:8px;margin-top:3px}
+ .table-tools{margin-top:4px}
+ .reading-table-output{margin-top:4px;padding:5px}
+ .reading-table-grid{gap:3px}.reading-table-grid span{min-height:27px;font-size:12px}
+ .settings-grid{margin:5px 0;gap:5px}
+ .settings-grid label{font-size:9px}.settings-grid input{padding:5px;margin-top:2px}
+ .timing-settings{gap:7px;margin:5px 0 3px}
+ .timing-control{padding:6px;border-radius:9px}
+ .timing-control label{font-size:9px}.timing-control strong{font-size:10px}
+ .timing-control input{margin:4px 0 1px}
+ .timing-control small{font-size:8px;line-height:1.15}
+ .last-session{font-size:9px;margin:3px 0}
+ .progress-dashboard{margin:3px 0 0;padding:5px 8px;font-size:9px;border-radius:8px}
+ .dashboard-metrics{margin:3px 0;gap:3px}.dashboard-metrics b{font-size:14px}
+ .dashboard-metrics small,.progress-dashboard>small{font-size:8px}
+ footer{flex:0 0 auto;padding:3px 0 0;font-size:8px}
+ .training{height:100%;min-height:0;padding:14px}
+ .stage{min-height:0}
+ .training-top{font-size:12px}
+ .progress{margin:7px 0 3px}
+ .training-bottom{font-size:9px;padding-top:3px}
+ .reading-help,.speech-status,.transcript{font-size:11px;margin:5px auto}
+ .reading-assessment{display:flex;gap:7px;margin:7px auto}
+ .reading-assessment .option{min-height:38px;font-size:14px;padding:5px 10px}
+ .mic-button{min-width:150px;padding:8px}
+ .result p{font-size:13px;margin:5px 0}
+ .trophy{font-size:48px}
+ .result .primary{margin:6px auto}
+}
+@media (min-width: 1000px) and (max-height: 820px) {
+ .topbar{padding-bottom:4px}
+ .path-card .muted:last-child{display:none}
+ .progress-dashboard{padding:4px 7px}
+ footer{display:none}
+}
+@media (min-width: 1000px) and (min-height: 700px) {
+ #settings:not(.hidden){display:block;overflow-y:auto;scrollbar-width:none}
+ #settings:not(.hidden)::-webkit-scrollbar{display:none}
+}
