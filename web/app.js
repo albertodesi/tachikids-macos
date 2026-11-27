@@ -319,10 +319,13 @@ function addCelebration(stage){
   star.style.setProperty("--ss",(18+Math.random()*24)+"px");
   burst.append(star);
  }
- layer.append(burst);stage.prepend(layer);
+ layer.append(burst);
  const result=stage.querySelector(".result");
  if(result){
   result.classList.add("celebration-result");
+  result.append(layer);
+ }else{stage.prepend(layer)}
+ if(result){
   const garland=document.createElement("div");garland.className="celebration-garland";
   const entrances=["garland-launch-left","garland-launch-right","garland-pop","garland-drop"];
   garland.classList.add(entrances[Math.floor(Math.random()*entrances.length)]);
