@@ -11,11 +11,11 @@ Su iPhone e iPad: apri il link in Safari, tocca **Condividi → Aggiungi alla sc
 ## Funzionalità
 
 - **Profilo bambino**: nome, scelta del genere grammaticale per saluti e messaggi, ripresa del percorso tramite profilo locale.
-- **Parole**: presentazione flash in sequenza automatica, con catalogo italiano di circa 9.900 forme lessicali e dieci fasce interne di complessità ortografica approssimata.
+- **Parole**: presentazione flash in sequenza automatica, con catalogo italiano di 14.743 forme lessicali e dieci fasce interne di complessità ortografica approssimata.
 - **Sillabe**: esercizi con gruppi di lettere e lunghezza configurabile.
 - **Memoria**: modalità dedicata agli esercizi di osservazione e richiamo.
 - **Leggi ad alta voce**: parole mostrate una alla volta, riconoscimento vocale opzionale quando supportato dal browser e valutazione complessiva a cura dell'adulto.
-- **Filtri avanzati collassabili**: numero stimato di sillabe, pattern ortografici, provenienza lessicale (core / extended) e lunghezza massima.
+- **Filtri avanzati collassabili**: numero stimato di sillabe, pattern ortografici, marche NVdB (FO/AU/AD), fascia di frequenza e lunghezza massima.
 - **Liste personalizzate**: l'adulto può inserire una propria lista di parole.
 - **Tabelle di lettura**: griglie 3×4, 4×4 e 5×5, stampabili e generate in base ai filtri selezionati.
 - **Tempi regolabili**: esposizione e pausa tra gli stimoli; opzione sperimentale per adattare l'esposizione al numero stimato di sillabe.
@@ -43,7 +43,7 @@ Per configurare GitHub Pages, in **Settings → Pages → Build and deployment**
 
 ## Vocabolario: cosa significano i livelli
 
-Il catalogo contiene circa 9.900 forme lessicali. Le fasce 1–10 sono una classificazione interna euristica basata sulla complessità ortografica approssimata: **non corrispondono a classi scolastiche, livelli clinici o fasce di frequenza certificate**.
+Il catalogo contiene 14.743 forme lessicali. Le fasce 1–10 sono una classificazione interna euristica basata sulla complessità ortografica approssimata: **non corrispondono a classi scolastiche, livelli clinici o fasce di frequenza certificate**. La presenza nel NVdB o in repertori di frequenza non equivale a una validazione pedagogica per età; è necessaria una selezione e revisione umana prima di proporre liste come graduazione didattica.
 
 Anche il conteggio delle sillabe e il riconoscimento dei pattern ortografici sono stime automatiche, non annotazioni linguistiche certificate. Le etichette core ed extended indicano la provenienza dei record dalle liste di origine, non una misura quantitativa della frequenza d'uso. Per dettagli e limiti consultare [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
 
