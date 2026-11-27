@@ -1045,3 +1045,28 @@ main{display:block;padding:6px 0 24px}
 @media (max-width:760px) {
   #settings .exercise-quick-settings #levelHint { display:none !important; }
 }
+
+
+/* Final desktop calibration: align timing panels to the path card top edge. */
+@media (min-width: 1000px) {
+  #settings .settings-controls { margin-top: 78px !important; }
+  #settings .exercise-quick-settings .setting-row select#level {
+    width: min(360px, 50%) !important;
+    max-width: 360px !important;
+    min-width: 0 !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    padding: 10px 12px !important;
+  }
+}
+@media (min-width: 761px) and (max-width: 999px) {
+  #settings .exercise-quick-settings .setting-row select#level {
+    font-size: 14px !important;
+    max-width: 52% !important;
+  }
+}
+@media (max-width: 760px) {
+  #settings .exercise-quick-settings .setting-row select#level {
+    font-size: 14px !important;
+  }
+}
