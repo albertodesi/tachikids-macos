@@ -803,3 +803,147 @@ main{display:block;padding:6px 0 24px}
   }
   #settings:not(.hidden) {padding-bottom:108px !important}
 }
+
+
+/* TachiKids: progressive setup flow, optimized for small screens */
+#settings .path-card {
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+#settings .path-card .session-summary {
+  width:100%;
+  max-width:none;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  margin:14px 0 0;
+  padding-top:14px;
+  border-top:1px solid #dce7fa;
+}
+#settings .path-card .session-summary .last-session {
+  width:100%;
+  text-align:left;
+  margin:0 0 10px;
+  font-size:15px;
+  line-height:1.45;
+}
+#settings .path-card .session-summary .progress-dashboard {
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding:14px 16px;
+  font-size:14px;
+}
+#settings .path-card .progress-dashboard>strong {font-size:16px}
+#settings .path-card .dashboard-metrics {margin:12px 0;gap:10px}
+#settings .path-card .dashboard-metrics b {font-size:27px}
+#settings .path-card .dashboard-metrics small,
+#settings .path-card .progress-dashboard>small {font-size:12px}
+#settings .mode-tabs {
+  gap:10px;
+  margin:12px 0 18px;
+}
+#settings .mode-tabs button {
+  min-height:66px;
+  padding:16px 12px;
+  font-size:18px;
+  font-weight:900;
+  border-radius:14px;
+}
+#settings .settings-controls {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+#settings .settings-controls>.setting-row {
+  min-height:54px;
+  padding:8px 14px;
+  margin:0;
+  border:1px solid #e0e8f6;
+  border-radius:13px;
+  background:#f8faff;
+  font-size:16px;
+}
+#settings .settings-controls>.hint {margin:-7px 4px 0;font-size:14px}
+#settings .settings-controls .timing-settings {margin:0;gap:10px}
+#settings .settings-controls .content-filters {margin:0}
+#settings .settings-controls .font-picker {margin:0}
+@media(max-width:760px) {
+  #settings {padding:18px 14px 120px}
+  #settings .settings-layout {display:flex;flex-direction:column;gap:0}
+  #settings .settings-primary,
+  #settings .settings-controls {width:100%;display:flex;flex-direction:column;gap:0}
+  #settings .section-heading {align-items:center;margin-bottom:6px}
+  #settings .section-heading h2 {font-size:25px;margin:0 0 10px}
+  #settings .section-heading .eyebrow {margin:0 0 5px;font-size:11px}
+  #settings .path-card {margin:6px 0 14px;padding:14px;border-radius:16px}
+  #settings .path-top {align-items:flex-start;font-size:15px}
+  #settings .path-top span {font-size:13px;text-align:right}
+  #settings .path-card>.muted {font-size:13px;line-height:1.45;margin:6px 0}
+  #settings .path-card .session-summary {margin-top:12px;padding-top:12px}
+  #settings .path-card .session-summary .last-session {font-size:14px}
+  #settings .path-card .progress-dashboard {padding:13px}
+  #settings .path-card .progress-dashboard>strong {font-size:15px}
+  #settings .path-card .dashboard-metrics {gap:5px;margin:10px 0}
+  #settings .path-card .dashboard-metrics b {font-size:25px}
+  #settings .path-card .dashboard-metrics small,
+  #settings .path-card .progress-dashboard>small {font-size:11px}
+  #settings .mode-tabs {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px;
+    margin:0 0 18px;
+  }
+  #settings .mode-tabs button {
+    min-height:72px;
+    padding:15px 8px;
+    font-size:17px;
+    border-radius:14px;
+  }
+  #settings .settings-controls {gap:12px}
+  #settings .settings-controls>.setting-row {
+    min-height:58px;
+    padding:9px 12px;
+    font-size:16px;
+  }
+  #settings .settings-controls>.setting-row select {
+    min-height:42px;
+    max-width:48%;
+    font-size:15px;
+  }
+  #settings .settings-controls>.hint {font-size:13px;margin:-8px 4px 0}
+  #settings .settings-controls .timing-settings {grid-template-columns:1fr;gap:10px}
+  #settings .settings-controls .timing-control {padding:13px}
+  #settings .settings-controls .timing-control label {font-size:15px}
+  #settings .settings-controls .timing-control small {font-size:12px}
+  #settings .settings-controls .content-filters {margin:0}
+  #settings .settings-controls .advanced-settings summary,
+  #settings .settings-controls .table-settings summary {min-height:58px;padding:12px}
+  #settings .settings-controls .advanced-settings .eyebrow,
+  #settings .settings-controls .table-settings .eyebrow {font-size:12px}
+  #settings .settings-controls .font-picker {padding:13px}
+  #settings .font-picker-heading label {font-size:15px}
+  #settings .font-picker-heading p {font-size:13px}
+  #settings .font-size-options {gap:5px}
+  #settings .font-size-option {min-height:68px}
+  #settings .font-size-option>span {font-size:30px !important}
+  #settings .font-size-option small {font-size:10px}
+  #settings .font-live-preview strong {font-size:23px}
+  #settings .settings-actions {display:block;margin-top:18px}
+  #settings .settings-actions #start {
+    position:fixed !important;top:auto !important;left:50% !important;bottom:max(12px,env(safe-area-inset-bottom)) !important;
+    transform:translateX(-50%) !important;width:calc(100vw - 28px) !important;max-width:none !important;
+    min-height:72px !important;margin:0 !important;z-index:1000 !important;
+  }
+}
+@media(min-width:761px) {
+  #settings .settings-layout {grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);gap:22px 28px}
+  #settings .settings-primary {min-width:0}
+  #settings .settings-controls {min-width:0}
+  #settings .settings-actions #start {
+    position:fixed !important;top:auto !important;left:50% !important;bottom:max(16px,env(safe-area-inset-bottom)) !important;
+    transform:translateX(-50%) !important;width:min(550px,calc(100vw - 40px)) !important;max-width:550px !important;
+    min-height:82px !important;margin:0 !important;z-index:1000 !important;
+  }
+  #settings:not(.hidden) {padding-bottom:120px !important}
+}
