@@ -1204,3 +1204,36 @@ main{display:block;padding:6px 0 24px}
     padding-right:29px !important;
   }
 }
+
+
+/* Prevent long level labels from running underneath the dropdown chevron. */
+#settings .exercise-quick-settings .setting-row select#level {
+  box-sizing:border-box !important;
+  width:min(360px,48%) !important;
+  max-width:48% !important;
+  min-width:0 !important;
+  padding:8px 42px 8px 12px !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  background-position:right 14px center !important;
+  background-size:15px 15px !important;
+}
+#settings .exercise-quick-settings .setting-row select#count {
+  box-sizing:border-box !important;
+  padding-right:40px !important;
+  background-position:right 13px center !important;
+}
+@media(max-width:760px) {
+  #settings .exercise-quick-settings .setting-row select#level {
+    width:48% !important;
+    max-width:48% !important;
+    padding:7px 32px 7px 9px !important;
+    background-position:right 9px center !important;
+    background-size:13px 13px !important;
+  }
+  #settings .exercise-quick-settings .setting-row select#count {
+    padding-right:30px !important;
+    background-position:right 9px center !important;
+  }
+}
