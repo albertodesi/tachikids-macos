@@ -1259,3 +1259,13 @@ main{display:block;padding:6px 0 24px}
   z-index:2 !important;
   pointer-events:none !important;
 }
+
+
+/* The celebration is decorative only: final controls always receive pointer input. */
+.reading-result { isolation:isolate; }
+.reading-result > .celebration-confetti,
+.reading-result > .celebration-garland { pointer-events:none !important; }
+.reading-result > .celebration-confetti { z-index:0 !important; }
+.reading-result > .celebration-garland { z-index:1 !important; }
+.reading-result .result-actions { position:relative !important; z-index:100 !important; }
+.reading-result .result-actions button { position:relative !important; z-index:101 !important; pointer-events:auto !important; }
