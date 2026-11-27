@@ -1064,6 +1064,9 @@ main{display:block;padding:6px 0 24px}
   }
   #settings > .settings-layout > .settings-primary,
   #settings > .settings-layout > .settings-controls {
+    grid-area:auto !important;
+    grid-column:auto !important;
+    grid-row:auto !important;
     min-width:0 !important;
     width:100%;
     margin:0 !important;
