@@ -20,7 +20,7 @@ function show(id){["welcome","settings","training"].forEach(x=>$(x).classList.to
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function bank(){
  if(state.mode==="syllables")return syllables[state.length];
- if($("useCustomList")?.checked){const custom=String($("customList")?.value||"").split(/[\\n,;]+/).map(x=>x.trim().toLocaleUpperCase("it-IT")).filter(x=>/^[A-ZÀÈÉÌÒÙ]{2,20}$/.test(x)&&isChildSafeWord(x));if(custom.length)return [...new Set(custom)]}
+ if($("useCustomList")?.checked){const custom=String($("customList")?.value||"").split(/[\n,;]+/).map(x=>x.trim().toLocaleUpperCase("it-IT")).filter(x=>/^[A-ZÀÈÉÌÒÙ]{2,20}$/.test(x)&&isChildSafeWord(x));if(custom.length)return [...new Set(custom)]}
  const opts={syllables:$("filterSyllables")?.value||"",pattern:$("filterPattern")?.value||"",frequency:$("filterFrequency")?.value||"",maxLength:$("filterMaxLength")?.value||""};
  return vocabularyEntries.filter(x=>x.level===state.level&&isChildSafeWord(x.word)).filter(x=>{
   const word=x.word.toLocaleUpperCase("it-IT"),count=window.TachiContent.syllables(word),patterns=window.TachiContent.patterns(word);
@@ -409,3 +409,7 @@ renderResult=function(completed){
 $("exposure").oninput=e=>$("exposureValue").textContent=(+e.target.value/1000).toFixed(1)+" s";$("pause").oninput=e=>$("pauseValue").textContent=(+e.target.value/1000).toFixed(1)+" s";syncTimingDefaults();loadWords();updateMode();
 /* Generatore di tabelle: usa gli stessi filtri del motore di contenuti */
 $("generateTable")?.addEventListener("click",()=>{const words=shuffle(bank());const [rows,cols]=($("tableSize")?.value||"3x4").split("x").map(Number);const amount=rows*cols;if(words.length<amount){notify("Servono almeno "+amount+" parole: amplia i filtri.");return}const out=$("readingTableOutput");out.innerHTML="";const table=document.createElement("div");table.className="reading-table-grid";table.style.setProperty("--cols",cols);words.slice(0,amount).forEach(word=>{const cell=document.createElement("span");cell.textContent=word;table.append(cell)});const tools=document.createElement("div");tools.className="table-actions";const print=document.createElement("button");print.className="text-button";print.textContent="Stampa tabella";print.onclick=()=>window.print();const refresh=document.createElement("button");refresh.className="text-button";refresh.textContent="Genera un'altra";refresh.onclick=()=>$("generateTable").click();tools.append(print,refresh);out.append(table,tools);out.classList.remove("hidden")});
+
+/* Liste personali salvate localmente sul dispositivo */
+try{const savedList=localStorage.getItem("tachikids-custom-list-v1");if(savedList&&$("customList"))$("customList").value=savedList}catch{}
+$("customList")?.addEventListener("input",e=>{try{localStorage.setItem("tachikids-custom-list-v1",e.target.value)}catch{}});
