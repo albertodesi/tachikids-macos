@@ -10,7 +10,12 @@ Su iPhone/iPad: apri il link in Safari, tocca **Condividi → Aggiungi alla sche
 
 ## Funzionalità
 
-- **Parole**: sequenza automatica di parole italiane organizzate in dieci livelli di difficoltà.
+- **Parole**: sequenza automatica su un catalogo di circa 9.900 parole in dieci fasce di complessità ortografica approssimata.
+- **Filtri linguistici**: selezione per numero stimato di sillabe, doppie, digrammi, gruppi consonantici, lunghezza e provenienza lessicale (`core` / `extended`).
+- **Liste personalizzate**: inserimento di parole proprie per esercizi mirati.
+- **Tabelle di lettura**: generazione di griglie 3×4, 4×4 e 5×5, stampabili, usando gli stessi filtri.
+- **Tempo adattivo sperimentale**: regolazione dell’esposizione in base al numero stimato di sillabe, disattivabile dall’adulto.
+- **Riepilogo progressi**: sessioni, stimoli visualizzati e accuratezza media delle sessioni valutate.
 - **Sillabe**: sequenza automatica di gruppi di lettere di lunghezza configurabile.
 - **Memoria visiva**: esercizi di osservazione e richiamo.
 - **Lettura ad alta voce**: parole mostrate una alla volta, valutazione da parte di un adulto e riconoscimento vocale opzionale quando supportato dal browser.
@@ -28,7 +33,7 @@ Per la prima configurazione, in **Settings → Pages → Build and deployment**,
 
 ## Vocabolario italiano
 
-Il dataset contiene parole suddivise in dieci livelli progressivi. Fonti, criteri di selezione, attribuzione e limiti sono documentati in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
+Il dataset contiene parole suddivise in dieci fasce di complessità ortografica approssimata. Le sillabazioni e i pattern ortografici usati dai filtri sono stime automatiche, non annotazioni linguistiche certificate. Fonti, criteri di selezione, attribuzione e limiti sono documentati in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
 
 ## Percorso adattivo e basi scientifiche
 
