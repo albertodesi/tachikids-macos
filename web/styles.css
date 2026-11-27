@@ -72,3 +72,26 @@
 
 /* Festoni sopra il pannello finale, non dietro al testo */
 .stage .celebration-garland{z-index:8;top:-18px;pointer-events:none}
+
+/* Finale v17: festone sul pannello e fuochi casuali */
+.celebration-result{overflow:visible;isolation:isolate;padding-top:64px!important}
+.celebration-result>.celebration-garland{position:absolute;z-index:30;top:-26px;left:0;right:0;height:88px;display:flex;justify-content:space-around;align-items:flex-start;pointer-events:none;filter:drop-shadow(0 7px 5px #25365d35);animation-duration:.9s;animation-fill-mode:both}
+.celebration-result>.celebration-garland:before{top:14px;left:2%;right:2%;height:38px;border-bottom:5px solid #ff9b42}
+.celebration-result>.celebration-garland .garland-flag{z-index:31;text-shadow:0 2px 5px #ffffff;filter:drop-shadow(0 3px 2px #25365d25)}
+.garland-launch-left{animation:garland-from-left .9s cubic-bezier(.16,1,.3,1) both}
+.garland-launch-right{animation:garland-from-right .9s cubic-bezier(.16,1,.3,1) both}
+.garland-pop{animation:garland-pop-in .85s cubic-bezier(.16,1,.3,1) both}
+.garland-drop{animation:garland-drop-in 1s cubic-bezier(.16,1,.3,1) both}
+@keyframes garland-from-left{from{opacity:0;transform:translate(-110%,45px) rotate(-14deg)}to{opacity:1;transform:translate(0,0) rotate(0)}}
+@keyframes garland-from-right{from{opacity:0;transform:translate(110%,45px) rotate(14deg)}to{opacity:1;transform:translate(0,0) rotate(0)}}
+@keyframes garland-pop-in{0%{opacity:0;transform:scale(.15) rotate(-18deg)}75%{opacity:1;transform:scale(1.12) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes garland-drop-in{0%{opacity:0;transform:translateY(-150px) scale(.8)}75%{opacity:1;transform:translateY(12px) scale(1.04)}100%{transform:translateY(0) scale(1)}}
+.celebration-burst .confetti-shot,.celebration-burst .confetti-firework,.celebration-burst .confetti-spiral{position:absolute;top:auto;left:auto;opacity:0;animation:confetti-cannon var(--duration) var(--delay) cubic-bezier(.15,.7,.25,1) both}
+.celebration-burst .confetti-firework{animation-name:confetti-firework-burst;animation-timing-function:cubic-bezier(.12,.7,.25,1)}
+.celebration-burst .confetti-spiral{animation-name:confetti-spiral-burst}
+.celebration-burst .confetti-rain{animation:confetti-fall var(--duration) var(--delay) ease-in both}
+@keyframes confetti-cannon{0%{opacity:0;transform:translate(0,0) scale(.25) rotate(0)}12%{opacity:1}62%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rotation))}100%{opacity:0;transform:translate(calc(var(--dx)*1.45),var(--fall)) scale(.65) rotate(calc(var(--rotation)*1.5))}}
+@keyframes confetti-firework-burst{0%{opacity:0;transform:translate(0,0) scale(.2)}12%{opacity:1}75%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rotation))}100%{opacity:0;transform:translate(calc(var(--dx)*1.12),calc(var(--dy)*1.12)) scale(.2) rotate(var(--rotation))}}
+@keyframes confetti-spiral-burst{0%{opacity:0;transform:translate(0,0) scale(.2) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.8) rotate(900deg)}}
+@media(max-width:520px){.celebration-result{padding-top:62px!important}.celebration-result>.celebration-garland{top:-22px;left:-4%;right:-4%}.celebration-result>.celebration-garland .garland-flag{font-size:21px;width:27px}}
+@media(prefers-reduced-motion:reduce){.garland-launch-left,.garland-launch-right,.garland-pop,.garland-drop,.celebration-burst .confetti-shot,.celebration-burst .confetti-firework,.celebration-burst .confetti-spiral{animation:none!important;opacity:1}}
