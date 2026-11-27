@@ -29,7 +29,7 @@ function bank(){
   if(opts.syllables==="5plus"&&count<5)return false;
   if(opts.syllables&&opts.syllables!=="5plus"&&count!==Number(opts.syllables))return false;
   if(opts.pattern&&!patterns.includes(opts.pattern))return false;
-  if(opts.frequency&&!((x.nvdbCategories||[]).includes(opts.frequency)||x.frequencyBand===opts.frequency||x.napoluxBand===opts.frequency.replace(/^napolux_/, "")))return false;
+  if(opts.frequency&&!((x.nvdb===opts.frequency)||x.frequency_band===opts.frequency))return false;
   if(opts.maxLength&&word.length>Number(opts.maxLength))return false;
   return true;
  }).map(x=>x.word.toLocaleUpperCase("it-IT"));
