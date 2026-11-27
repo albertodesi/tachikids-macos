@@ -123,6 +123,7 @@ render=function(){
  const statusText=state.speechStatus||"Attivazione del microfono…";
  status.textContent=/not available|non disponibile/i.test(statusText)?"Microfono non disponibile":/not-allowed|negato|non autorizzato/i.test(statusText)?"Microfono non autorizzato":/ripristino|riprovo|attivazione/i.test(statusText)?"Connessione microfono…":"In ascolto";
  status.setAttribute("aria-live","polite");stage.append(status);
+  }
 };
 finish=function(completed){
  cancel();stopSpeech();state.visible=false;state.waiting=false;
