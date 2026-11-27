@@ -1070,3 +1070,15 @@ main{display:block;padding:6px 0 24px}
     font-size: 14px !important;
   }
 }
+
+
+/* Compact selected difficulty label: keep long level descriptions readable without crowding the control. */
+@media (min-width: 761px) {
+  #settings .exercise-quick-settings .setting-row select#level {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px !important;
+    padding: 8px 10px !important;
+  }
+}
