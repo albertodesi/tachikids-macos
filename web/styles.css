@@ -179,3 +179,30 @@
  #settings:not(.hidden){display:block;overflow-y:auto;scrollbar-width:none}
  #settings:not(.hidden)::-webkit-scrollbar{display:none}
 }
+
+
+/* Advanced stimulus filters are collapsible; keep the reading table visible */
+.advanced-settings{border:0}
+.advanced-settings>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;cursor:pointer;user-select:none}
+.advanced-settings>summary::-webkit-details-marker{display:none}
+.advanced-settings>summary:after{content:"＋";display:grid;place-items:center;width:28px;height:28px;flex:0 0 28px;border-radius:9px;background:#eaf1ff;color:var(--blue);font-size:20px;font-weight:800}
+.advanced-settings[open]>summary:after{content:"−"}
+.advanced-state{font-size:12px;font-weight:800;color:var(--blue)}
+.advanced-settings[open] .advanced-state{font-size:0}
+.advanced-settings[open] .advanced-state:after{content:"Nascondi impostazioni";font-size:12px}
+.advanced-settings-body{padding-top:12px}
+@media (min-width:1000px) and (min-height:700px){
+ .content-filters{padding:10px 12px}
+ .advanced-settings>summary .eyebrow{font-size:12px;letter-spacing:1.4px}
+ .advanced-state{font-size:12px}
+ .filter-grid{gap:8px}
+ .filter-grid label{font-size:12px;gap:5px}
+ .filter-grid select{font-size:12px;padding:8px}
+ .custom-toggle{font-size:12px;margin-top:8px}
+ .content-filters textarea{font-size:12px;padding:8px}
+ .table-tools{margin-top:8px}
+ .table-tools label{font-size:11px}
+ .table-tools select{font-size:12px;padding:7px}
+ .reading-table-grid span{min-height:38px;font-size:16px}
+ .reading-table-output{padding:8px}
+}
