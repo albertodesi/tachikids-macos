@@ -1,48 +1,65 @@
-# TachiKids — Web App
+# TachiKids
 
-TachiKids è una Progressive Web App (PWA) per esercizi di lettura, pensata per bambini della scuola primaria. Si usa da browser su iPhone, iPad, Android, tablet e computer: non richiede un'app nativa né un account.
+TachiKids è una **Progressive Web App (PWA)** per allenare il riconoscimento visivo delle parole, delle sillabe, la memoria e la lettura ad alta voce. È pensata per bambini della scuola primaria e si usa da browser su computer, tablet e smartphone: non richiede un'app nativa, un account o un backend.
 
 ## Apri TachiKids
 
-**https://albertodesi.github.io/tachikids-macos/**
+**https://albertodesi.github.io/tachikids-webapp/**
 
-Su iPhone/iPad: apri il link in Safari, tocca **Condividi → Aggiungi alla schermata Home** per avere un'icona come un'app.
+Su iPhone e iPad: apri il link in Safari, tocca **Condividi → Aggiungi alla schermata Home**. Su Android e sui browser desktop compatibili puoi usare il comando di installazione del browser.
 
 ## Funzionalità
 
-- **Parole**: sequenza automatica su un catalogo di circa 9.900 parole in dieci fasce di complessità ortografica approssimata.
-- **Filtri linguistici**: selezione per numero stimato di sillabe, doppie, digrammi, gruppi consonantici, lunghezza e provenienza lessicale (`core` / `extended`).
-- **Liste personalizzate**: inserimento di parole proprie per esercizi mirati.
-- **Tabelle di lettura**: generazione di griglie 3×4, 4×4 e 5×5, stampabili, usando gli stessi filtri.
-- **Tempo adattivo sperimentale**: regolazione dell’esposizione in base al numero stimato di sillabe, disattivabile dall’adulto.
-- **Riepilogo progressi**: sessioni, stimoli visualizzati e accuratezza media delle sessioni valutate.
-- **Sillabe**: sequenza automatica di gruppi di lettere di lunghezza configurabile.
-- **Memoria visiva**: esercizi di osservazione e richiamo.
-- **Lettura ad alta voce**: parole mostrate una alla volta, valutazione da parte di un adulto e riconoscimento vocale opzionale quando supportato dal browser.
-- Regolazione di esposizione, pausa e dimensione del carattere.
-- Profilo e progressi salvati localmente nel browser.
-- PWA installabile dalla schermata Home e risorse memorizzate per l'uso offline dopo il primo caricamento riuscito.
+- **Profilo bambino**: nome, scelta del genere grammaticale per saluti e messaggi, ripresa del percorso tramite profilo locale.
+- **Parole**: presentazione flash in sequenza automatica, con catalogo italiano di circa 9.900 forme lessicali e dieci fasce interne di complessità ortografica approssimata.
+- **Sillabe**: esercizi con gruppi di lettere e lunghezza configurabile.
+- **Memoria**: modalità dedicata agli esercizi di osservazione e richiamo.
+- **Leggi ad alta voce**: parole mostrate una alla volta, riconoscimento vocale opzionale quando supportato dal browser e valutazione complessiva a cura dell'adulto.
+- **Filtri avanzati collassabili**: numero stimato di sillabe, pattern ortografici, provenienza lessicale (core / extended) e lunghezza massima.
+- **Liste personalizzate**: l'adulto può inserire una propria lista di parole.
+- **Tabelle di lettura**: griglie 3×4, 4×4 e 5×5, stampabili e generate in base ai filtri selezionati.
+- **Tempi regolabili**: esposizione e pausa tra gli stimoli; opzione sperimentale per adattare l'esposizione al numero stimato di sillabe.
+- **Percorso e progressi**: riepilogo delle sessioni e avanzamento adattivo basato su regole euristiche.
+- **Interfaccia responsive**: layout desktop compatto e mobile con scorrimento naturale.
+- **PWA e uso offline**: dopo il primo caricamento online, le risorse principali vengono memorizzate dal service worker per consentire l'apertura offline.
+
+## Repository e struttura
+
+- `web/index.html`: struttura dell'app e schermate.
+- `web/app.js`: logica delle modalità, profili e sessioni.
+- `web/styles.css`: interfaccia responsive e stili.
+- `web/content-engine.js`: stime di sillabazione, pattern ortografici e tempi adattivi.
+- `web/vocabulary/reading-vocabulary-it.json`: catalogo lessicale.
+- `web/sw.js`: service worker e cache offline.
+- `web/manifest.webmanifest`: configurazione PWA.
+- `VOCABULARY-SOURCES.md`: fonti, attribuzioni, criteri di selezione e limiti del vocabolario.
+- `CONTENT-MODEL.md`: modello dei contenuti e metadati.
 
 ## Sviluppo e pubblicazione
 
-Il codice applicativo è in `web/`. Il vocabolario italiano è in `web/vocabulary/reading-vocabulary-it.json`.
+Il sito pubblicato è servito da GitHub Pages. Il workflow [Deploy TachiKids Web App](.github/workflows/deploy-web.yml) pubblica automaticamente il contenuto di `web/` quando vengono aggiornati i file della web app su `main`, oppure tramite avvio manuale del workflow.
 
-La pubblicazione su GitHub Pages è automatica tramite GitHub Actions a ogni modifica alla web app. Workflow: [Deploy TachiKids Web App](.github/workflows/deploy-web.yml).
+Per configurare GitHub Pages, in **Settings → Pages → Build and deployment** la sorgente deve essere **GitHub Actions**.
 
-Per la prima configurazione, in **Settings → Pages → Build and deployment**, seleziona **GitHub Actions**.
+## Vocabolario: cosa significano i livelli
 
-## Vocabolario italiano
+Il catalogo contiene circa 9.900 forme lessicali. Le fasce 1–10 sono una classificazione interna euristica basata sulla complessità ortografica approssimata: **non corrispondono a classi scolastiche, livelli clinici o fasce di frequenza certificate**.
 
-Il dataset contiene parole suddivise in dieci fasce di complessità ortografica approssimata. Le sillabazioni e i pattern ortografici usati dai filtri sono stime automatiche, non annotazioni linguistiche certificate. Fonti, criteri di selezione, attribuzione e limiti sono documentati in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
+Anche il conteggio delle sillabe e il riconoscimento dei pattern ortografici sono stime automatiche, non annotazioni linguistiche certificate. Le etichette core ed extended indicano la provenienza dei record dalle liste di origine, non una misura quantitativa della frequenza d'uso. Per dettagli e limiti consultare [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
 
-## Percorso adattivo e basi scientifiche
+## Percorso adattivo: limiti interpretativi
 
-I tempi di esposizione sono parametri sperimentali di prodotto, non soglie cliniche né tempi ottimali stabiliti dalla letteratura. Le regole di avanzamento del percorso sono euristiche iniziali da validare: il punteggio non è una valutazione scolastica o clinica.
-
-Uno studio eye-tracking su bambini italiani ha osservato tempi di prima fissazione e gaze duration differenti in base a classe, lunghezza e frequenza delle parole; tali misure non definiscono un tempo universale per la presentazione flash. [Studio open access](https://pmc.ncbi.nlm.nih.gov/articles/PMC6279875/). Per prove di lettura e fluenza, consultare anche le risorse [AIRIPA](https://www.airipa.it/wp-content/uploads/2013/12/Articolo-percentili-Losito-Tressoldi-Cornoldi-1-1.pdf).
+I tempi di esposizione e le regole di avanzamento sono parametri sperimentali di prodotto ed euristiche iniziali. Non sono soglie cliniche, tempi ottimali stabiliti dalla letteratura o benchmark diagnostici. I risultati dell'app non costituiscono una valutazione scolastica o clinica.
 
 ## Privacy e riconoscimento vocale
 
-Il profilo viene salvato in `localStorage` sul browser/dispositivo: non c'è login, backend o sincronizzazione cloud. Cancellando i dati del sito si può perdere il percorso.
+- Il profilo, le sessioni e le liste personalizzate sono salvati in `localStorage` nel browser/dispositivo.
+- Non sono previsti login, backend o sincronizzazione cloud.
+- Cancellando i dati del sito o cambiando dispositivo/browser, il percorso locale può andare perso.
+- La modalità di lettura mantiene la valutazione manuale come alternativa al riconoscimento vocale.
+- Il riconoscimento vocale dipende dal supporto del browser e può utilizzare un servizio remoto che riceve l'audio. TachiKids non salva registrazioni audio. L'adulto deve autorizzare il microfono e valutare se usare questa funzione.
+- Riferimento tecnico: [MDN — SpeechRecognition](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition).
 
-La modalità di lettura mantiene sempre la valutazione manuale come alternativa. Il riconoscimento vocale dipende dal browser; può usare un servizio remoto e inviare l'audio. TachiKids non registra né conserva file audio. L'adulto deve leggere l'avviso e autorizzare il microfono prima dell'uso. Riferimenti: [MDN — SpeechRecognition](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition).
+## Obiettivo del progetto
+
+TachiKids è uno strumento di esercizio e supporto alla pratica domestica. Non sostituisce l'insegnamento, la valutazione dell'insegnante o un percorso specialistico.
