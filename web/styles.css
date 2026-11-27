@@ -1082,27 +1082,3 @@ main{display:block;padding:6px 0 24px}
     padding: 8px 10px !important;
   }
 }
-
-
-/* Structural alignment: one shared two-column wrapper owns the path card and timing controls. */
-@media (min-width: 761px) {
-  #settings > .settings-layout { display:block !important; }
-  #settings .settings-primary { display:block !important; width:100%; min-width:0; }
-  #settings .settings-columns {
-    display:grid !important;
-    grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);
-    column-gap:28px;
-    align-items:start;
-    width:100%;
-  }
-  #settings .settings-left,
-  #settings .settings-controls { min-width:0; width:100%; margin-top:0 !important; }
-  #settings .settings-controls { padding-top:0 !important; }
-}
-@media (max-width: 760px) {
-  #settings > .settings-layout { display:block !important; }
-  #settings .settings-primary { display:flex; flex-direction:column; width:100%; }
-  #settings .settings-columns { display:flex; flex-direction:column; gap:12px; width:100%; }
-  #settings .settings-left,
-  #settings .settings-controls { width:100%; min-width:0; margin-top:0 !important; }
-}
