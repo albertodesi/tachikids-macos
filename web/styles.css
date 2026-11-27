@@ -277,3 +277,38 @@ footer{font-size:12px;line-height:1.4}
  .filter-grid label,.table-tools label{font-size:12px}
  .custom-toggle{font-size:12px}
 }
+
+
+/* Desktop single-screen composition: learner journey left, all controls right */
+@media (min-width:1000px) and (min-height:700px){
+ #settings:not(.hidden){display:flex;flex-direction:column;overflow:hidden;gap:0}
+ .settings-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(390px,.95fr);gap:20px;flex:1;min-height:0;align-items:stretch}
+ .settings-primary,.settings-controls{min-width:0;display:flex;flex-direction:column;gap:7px}
+ .settings-primary .path-card{margin:4px 0 8px;padding:14px 16px}
+ .settings-primary .path-card .muted{font-size:12px;line-height:1.45}
+ .settings-primary .section-heading{padding:0 2px}
+ .settings-primary .mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:5px 0 10px}
+ .settings-primary .mode-tabs button{font-size:15px;padding:13px 8px}
+ .settings-primary .setting-row{margin:7px 0;font-size:14px}
+ .settings-primary .setting-row select{font-size:14px;min-height:42px}
+ .settings-primary .hint{font-size:13px;margin:0 0 5px}
+ .settings-controls .content-filters{margin:0 0 7px;padding:12px}
+ .settings-controls .settings-grid{margin:6px 0;grid-template-columns:1fr}
+ .settings-controls .settings-grid label{font-size:13px}
+ .settings-controls .settings-grid input{max-width:100%;min-height:42px;font-size:16px}
+ .settings-controls .setting-row{margin:7px 0;font-size:14px}
+ .settings-controls .setting-row select{min-height:42px;font-size:14px}
+ .settings-controls .timing-settings{grid-template-columns:1fr;gap:8px;margin:8px 0 4px}
+ .settings-controls .timing-control{padding:10px 12px}
+ .settings-controls .timing-control label{font-size:14px}
+ .settings-controls .timing-control small{font-size:12px}
+ .settings-actions{flex:0 0 auto;display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,2fr);column-gap:16px;align-items:center;margin-top:10px}
+ .settings-actions #start{grid-column:1;grid-row:1 / span 2;margin:0;align-self:stretch;min-height:54px}
+ .settings-actions .last-session{grid-column:2;grid-row:1;margin:0;text-align:left}
+ .settings-actions .progress-dashboard{grid-column:2;grid-row:2;margin:0;padding:7px 12px}
+ .settings-actions .dashboard-metrics{margin:4px 0}
+}
+@media (max-width:999px){
+ .settings-layout{display:block}
+ .settings-actions{display:block}
+}
