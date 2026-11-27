@@ -1,99 +1,43 @@
-# TachiKids
+# TachiKids — Web App
 
-Native SwiftUI macOS app for short visual-reading exercises for primary-school children.
+TachiKids è una Progressive Web App (PWA) per esercizi di lettura, pensata per bambini della scuola primaria. Si usa da browser su iPhone, iPad, Android, tablet e computer: non richiede un'app nativa né un account.
 
-## Features
-- Random words across ten progressively harder difficulty levels
-- Syllable-like letter groups from 2 to 5 characters
-- Visual-memory mode with multiple-choice recall
-- Editable timing fields for exposure, pause and font size
-- Player name and animated in-app celebration at the end of each session
-- Custom macOS app icon based on the in-app eye symbol
-- Local session summary
+## Apri TachiKids
 
-## Requirements
-- macOS 13+
-- Xcode 15+ / Swift 5.9+
+**https://albertodesi.github.io/tachikids-macos/**
 
-## Run locally
-```bash
-swift run
-```
+Su iPhone/iPad: apri il link in Safari, tocca **Condividi → Aggiungi alla schermata Home** per avere un'icona come un'app.
 
-## Build an app bundle
-```bash
-chmod +x build-app.sh
-./build-app.sh
-```
-The app bundle is created at `dist/TachiKids.app`.
+## Funzionalità
 
-## Automated build
-Every push to `main` runs a macOS build. Download the ZIP from the Actions run's Artifacts section. Pushing a tag such as `v2.0.0` also creates a GitHub Release with the ZIP attached.
+- **Parole**: sequenza automatica di parole italiane organizzate in dieci livelli di difficoltà.
+- **Sillabe**: sequenza automatica di gruppi di lettere di lunghezza configurabile.
+- **Memoria visiva**: esercizi di osservazione e richiamo.
+- **Lettura ad alta voce**: parole mostrate una alla volta, valutazione da parte di un adulto e riconoscimento vocale opzionale quando supportato dal browser.
+- Regolazione di esposizione, pausa e dimensione del carattere.
+- Profilo e progressi salvati localmente nel browser.
+- PWA installabile dalla schermata Home e risorse memorizzate per l'uso offline dopo il primo caricamento riuscito.
 
-The app is not code-signed or notarized. Gatekeeper may require opening it via right-click > Open. Signing and notarization require an Apple Developer ID.
+## Sviluppo e pubblicazione
 
+Il codice applicativo è in `web/`. Il vocabolario italiano è in `web/vocabulary/reading-vocabulary-it.json`.
 
-## Vocabolario italiano per la lettura
-- Vocabolario locale integrato di 9.972 parole, suddiviso in 10 livelli progressivi.
-- I livelli 1–9 contengono 1.000 parole ciascuno; il livello 10 ne contiene 972. Gli stimoli sono disponibili offline.
-- Il dataset distingue il nucleo di parole comuni (`core`) dal lessico esteso (`extended`).
-- Fonti, criteri di selezione, attribuzione e limiti sono documentati in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
+La pubblicazione su GitHub Pages è automatica tramite GitHub Actions a ogni modifica alla web app. Workflow: [Deploy TachiKids Web App](.github/workflows/deploy-web.yml).
 
+Per la prima configurazione, in **Settings → Pages → Build and deployment**, seleziona **GitHub Actions**.
 
-**Reading-vocabulary note:** the current dataset prioritizes the common-word subset and is grouped by estimated spelling complexity. It is not yet ranked by a primary-school reading corpus. Research notes and source limitations are documented in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
+## Vocabolario italiano
 
-## Web app (PWA)
-
-TachiKids is also available as a browser-based Progressive Web App, with no mandatory installation. It includes the three training modes (words, syllables and visual memory), adjustable exposure/pause/font size, ten vocabulary levels, session progress and a local last-session summary. The app is designed for mobile, tablet and desktop and caches its assets and vocabulary for offline use after the first successful load.
-
-- Open the GitHub Pages site: https://albertodesi.github.io/tachikids-macos/
-- On iPhone/iPad: open the link in Safari and use **Condividi → Aggiungi alla schermata Home** if you want an app-like shortcut.
-- Deployment is automatic through GitHub Actions on changes to `web/` or the vocabulary JSON. Before the first deployment, enable GitHub Pages manually in repository Settings → Pages → Build and deployment → **GitHub Actions**. The connected GitHub integration cannot enable this repository setting on your behalf.
-
-The native SwiftUI macOS app remains available; the web app is an additional, install-free way to use TachiKids.
-
+Il dataset contiene parole suddivise in dieci livelli progressivi. Fonti, criteri di selezione, attribuzione e limiti sono documentati in [VOCABULARY-SOURCES.md](VOCABULARY-SOURCES.md).
 
 ## Percorso adattivo e basi scientifiche
 
-La PWA propone un percorso di esposizione progressiva con sei step interni (900, 800, 700, 600, 500 e 450 ms). Questi valori sono **parametri sperimentali di prodotto**, scelti per rendere graduale l'esercizio: non sono soglie cliniche, né tempi ottimali stabiliti dalla letteratura.
+I tempi di esposizione sono parametri sperimentali di prodotto, non soglie cliniche né tempi ottimali stabiliti dalla letteratura. Le regole di avanzamento del percorso sono euristiche iniziali da validare: il punteggio non è una valutazione scolastica o clinica.
 
-Ogni stimolo è seguito da una scelta a quattro alternative, così il sistema misura una risposta e può adattare il livello:
-- almeno 90% di risposte corrette per due sessioni consecutive: si avanza di uno step;
-- meno del 75%: si torna a uno step più lento;
-- tra 75% e 89%: si mantiene lo step.
+Uno studio eye-tracking su bambini italiani ha osservato tempi di prima fissazione e gaze duration differenti in base a classe, lunghezza e frequenza delle parole; tali misure non definiscono un tempo universale per la presentazione flash. [Studio open access](https://pmc.ncbi.nlm.nih.gov/articles/PMC6279875/). Per prove di lettura e fluenza, consultare anche le risorse [AIRIPA](https://www.airipa.it/wp-content/uploads/2013/12/Articolo-percentili-Losito-Tressoldi-Cornoldi-1-1.pdf).
 
-Le soglie 90%/75% e la regola delle due sessioni sono euristiche iniziali da validare con osservazioni d'uso; non sono cut-off diagnostici. Il punteggio non è una valutazione scolastica o clinica.
+## Privacy e riconoscimento vocale
 
-### Cosa dice la letteratura (e cosa non dice)
+Il profilo viene salvato in `localStorage` sul browser/dispositivo: non c'è login, backend o sincronizzazione cloud. Cancellando i dati del sito si può perdere il percorso.
 
-- Uno studio eye-tracking su bambini italiani di terza, quarta e quinta primaria ha osservato una prima fissazione media di circa 246, 227 e 199 ms rispettivamente, su parole derivate presentate in contesto. La durata della prima fissazione non equivale al tempo per cui un'app dovrebbe mostrare una parola. [Studio open access](https://pmc.ncbi.nlm.nih.gov/articles/PMC6279875/).
-- Nello stesso studio, la durata dello sguardo (gaze duration) era molto più lunga e dipendeva anche da lunghezza, frequenza e competenza di lettura. Questo conferma che non esiste un singolo tempo universale da applicare a ogni parola e bambino.
-- Le norme di fluenza su brani o liste (ad esempio sillabe/secondo o parole corrette al minuto) misurano una prestazione diversa dall'esposizione flash di parole. Non vanno convertite direttamente in millisecondi di presentazione. Un riferimento italiano di prove di lettura è disponibile [qui (AIRIPA)](https://www.airipa.it/wp-content/uploads/2013/12/Articolo-percentili-Losito-Tressoldi-Cornoldi-1-1.pdf).
-
-Perciò TachiKids non dichiara un "tempo ideale" scientifico. Gli step temporali servono solo a strutturare un allenamento personalizzato; in futuro potranno essere calibrati con un campione più ampio, per classe, familiarità lessicale e accuratezza.
-
-### Ripresa del percorso e privacy
-
-Il profilo viene salvato in `localStorage` sul browser/dispositivo e identificato da un codice casuale di ripresa. Non c'è login, backend o sincronizzazione cloud. Il codice è un riferimento locale, **non** un account e non consente di recuperare il percorso su un altro dispositivo o browser. Cancellando i dati del sito si può perdere il percorso.
-
-
-## Modalità Lettura ad alta voce
-
-La modalità **Leggi ad alta voce** mostra una parola per volta e permette a un adulto di valutare:
-- letta correttamente;
-- letta con aiuto;
-- da riprovare.
-
-Nei browser che espongono `SpeechRecognition` (o `webkitSpeechRecognition`) è disponibile anche il microfono. La trascrizione viene confrontata con la parola mostrata, ma **non determina automaticamente il voto**: il riconoscimento vocale può sbagliare, soprattutto con voci di bambini, pronunce in apprendimento, rumore e parole poco comuni. L'adulto conferma sempre la valutazione.
-
-### Limiti tecnici e privacy del microfono
-
-La Web Speech API non è supportata in modo uniforme. L'interfaccia rileva la funzionalità a runtime e mantiene la valutazione manuale quando il browser non la espone. La disponibilità del riconoscimento vocale e del riconoscimento on-device varia tra browser e sistemi operativi: [MDN — SpeechRecognition](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition) e [MDN — riconoscimento on-device](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API#on-device_speech_recognition).
-
-Il riconoscimento standard può usare un servizio del browser e quindi inviare l'audio a un servizio remoto. TachiKids non registra né salva file audio; non conserva neppure la trascrizione nel profilo dopo la sessione. Prima di attivare il microfono, l'adulto deve leggere l'avviso e autorizzare l'uso. Non è corretto promettere che l'elaborazione sia sempre locale o offline.
-
-**Compatibilità pratica:** la modalità manuale è il fallback garantito. Il pulsante microfono appare attivo soltanto se il browser espone l'API; anche in quel caso, permessi e servizio di riconoscimento possono impedirne l'uso. Su iPhone/Safari va verificato sul dispositivo reale prima di considerarlo affidabile.
-
-### Come leggere i risultati
-
-I tempi mostrati sono una stima tra l'avvio del microfono e la restituzione della trascrizione: includono la latenza del servizio e non sono una misura standardizzata del tempo di lettura. Non vengono usati per far avanzare o retrocedere il percorso flash. Per misurare la fluenza in modo più attendibile servono protocolli controllati (brano, durata, parole corrette, errori e autocorrezioni), non il solo tempo di riconoscimento di una singola parola.
+La modalità di lettura mantiene sempre la valutazione manuale come alternativa. Il riconoscimento vocale dipende dal browser; può usare un servizio remoto e inviare l'audio. TachiKids non registra né conserva file audio. L'adulto deve leggere l'avviso e autorizzare il microfono prima dell'uso. Riferimenti: [MDN — SpeechRecognition](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition).
