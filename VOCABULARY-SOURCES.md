@@ -1,87 +1,116 @@
-# Vocabolario TachiKids — fonti, uso e criteri
+# Vocabolario TachiKids — fonti, integrazione e criteri
 
-## Stato attuale dell'integrazione
+## Stato dell'integrazione
 
-**Il Nuovo Vocabolario di Base (NVdB) di Tullio De Mauro NON è attualmente integrato nel dataset dell'app.** È una fonte di riferimento individuata per una futura revisione e integrazione, ma non va confusa con la fonte effettivamente utilizzata oggi.
+**Il Nuovo Vocabolario di Base (NVdB) di Tullio De Mauro è ora integrato nel dataset runtime di TachiKids.**
 
-Il file caricato dall'app è `web/vocabulary/reading-vocabulary-it.json`. L'app lo legge localmente con `fetch("./vocabulary/reading-vocabulary-it.json")` e usa le proprietà `word`, `level` e `frequencyBand` per costruire il repertorio degli stimoli e applicare i filtri.
+File utilizzato dall'app: `web/vocabulary/reading-vocabulary-it.json`  
+Caricamento: `web/app.js`, funzione `loadWords()`.
 
-## Fonte effettivamente utilizzata
+Il dataset è una fusione di:
+- **NVdB De Mauro/Chiari (2016): 7.173 forme lessicali uniche** ricavate dal dataset strutturato CSV;
+- **Napolux/paroleitaliane: 8.126 forme aggiuntive** non già presenti nel NVdB;
+- **Totale: 15.299 forme lessicali uniche** nel catalogo.
+
+Le 1.771 parole presenti in entrambe le fonti sono mantenute una sola volta e contrassegnate con `alsoInNapolux: true`, dando priorità alla classificazione NVdB.
+
+## NVdB — Nuovo Vocabolario di Base
+
+Riferimento originale:
+- De Mauro, Tullio; Chiari, Isabella (con la collaborazione di Francesca Ferrucci), *Il Nuovo vocabolario di base della lingua italiana*, pubblicato da Internazionale il 23 dicembre 2016.
+- Articolo e PDF originale: https://www.internazionale.it/opinione/tullio-de-mauro/2016/12/23/il-nuovo-vocabolario-di-base-della-lingua-italiana
+- Repository di estrazione e materiali NVdB: https://github.com/pettarin/nvdb
+- Dataset strutturato usato per l'importazione: https://github.com/simo-mazzoli/vocabolario-di-base
+
+Il NVdB nasce dall'analisi di un campione di testi di circa 18,8 milioni di occorrenze, suddivisi in sei categorie, con lemmatizzazione e una componente di alta disponibilità verificata con parlanti. Non è una semplice lista generica di parole.
+
+### Marche d'uso preservate
+
+| Marca | Campo dati | Significato |
+|---|---|---|
+| **FO** | `fondamentale` | Vocabolario fondamentale |
+| **AU** | `alto_uso` | Vocabolario di alto uso |
+| **AD** | `alta_disponibilita` | Vocabolario di alta disponibilità |
+
+Nel dataset runtime, dopo l'accorpamento delle forme omografe:
+- FO: 1.924 forme uniche;
+- AU: 3.081 forme uniche;
+- AD: 2.168 forme uniche;
+- totale: 7.173 forme uniche.
+
+I numeri del CSV sorgente sono 7.237 record (1.969 FO, 3.097 AU, 2.171 AD). La differenza deriva dall'accorpamento delle voci ripetute/omografe in un'unica forma visualizzabile: le informazioni delle diverse accezioni sono conservate in `nvdbSenses`. Le voci composte con trattino sono mantenute; le voci composte da più parole non sono utilizzate come singolo stimolo.
+
+### Metadati disponibili per parola
+
+Per le voci NVdB il dataset conserva:
+- `word`: forma lessicale visualizzata;
+- `frequencyBand`: marca d'uso principale;
+- `nvdbCategories`: tutte le marche presenti per la forma;
+- `nvdbMark`: sigla FO, AU o AD;
+- `grammar`: qualifica grammaticale nella notazione originale;
+- `pos`: parte del discorso normalizzata;
+- `gender`: genere/numero/invariabilità, quando disponibile;
+- `verbInfo`: informazioni verbali originali;
+- `nvdbSenses`: dettagli delle voci omografe ripetute, incluse marca e qualifica grammaticale;
+- `source`: provenienza del record.
+
+Le informazioni grammaticali non vengono usate per generare definizioni o per alterare la parola mostrata: sono conservate per filtri e sviluppi didattici futuri.
+
+## Come viene usato nell'app
+
+1. **Caricamento:** `web/app.js` carica il JSON locale `./vocabulary/reading-vocabulary-it.json`. Il file è incluso nel precaching del service worker, quindi è disponibile anche offline dopo il primo caricamento riuscito.
+2. **Selezione livello:** ogni parola ha un campo `level` da 1 a 10. I livelli sono decili di una stima automatica della complessità ortografica, calcolata su lunghezza, gruppi vocalici, doppie, digrammi e gruppi consonantici. Non sono livelli scolastici né marche De Mauro.
+3. **Filtro lessicale:** il selettore nell'interfaccia permette di scegliere tutte le parole, FO, AU, AD, oppure le due fasce complementari Napolux.
+4. **Filtro sillabe:** il numero di sillabe è stimato automaticamente contando i gruppi vocalici. È un'approssimazione, non una sillabazione linguistica certificata.
+5. **Filtro ortografico:** il motore riconosce euristicamente doppie, digrammi, gruppi consonantici e iniziale vocalica.
+6. **Parole complementari:** Napolux resta come repertorio aggiuntivo, chiaramente distinto dal NVdB tramite `source: "napolux"` e le fasce `napolux_core` / `napolux_extended`.
+7. **Sicurezza e adeguatezza:** prima di entrare nella coda degli stimoli, le parole passano dal filtro prudenziale `isChildSafeWord()`. Questo filtro è una protezione lessicale di base, non una revisione pedagogica completa.
+8. **Ripetizioni:** le parole vengono mescolate e non ripetute nella sessione finché non si esaurisce la selezione disponibile.
+
+**Importante:** FO/AU/AD indicano uso e disponibilità lessicale, non difficoltà di lettura. Una parola FO può essere ortograficamente complessa e una parola AD può essere molto semplice. TachiKids mantiene separate queste due dimensioni.
+
+## Napolux — repertorio complementare
 
 Repository: https://github.com/napolux/paroleitaliane  
-File sorgente:
+File sorgente storici:
 - `1000_parole_italiane_comuni.txt`
 - `60000_parole_italiane.txt`
 
-Licenza dichiarata dal repository: MIT.  
-Versione consultata: 26 novembre 2026.  
-Commit sorgente per la lista 60.000: `749d665468746bca5fff3e3a650f04f010c31fcf`.
+Licenza dichiarata dal repository: MIT. Versione consultata: 26 novembre 2026. Commit sorgente per la lista 60.000: `749d665468746bca5fff3e3a650f04f010c31fcf`.
 
-Nel dataset verificato il 27 novembre 2026 risultano:
-- 9.897 voci complessive;
-- 1.123 voci marcate `core`, provenienti dalla lista delle 1.000 parole italiane comuni;
-- 8.774 voci marcate `extended`, provenienti dalla lista estesa di 60.000 parole.
+Nel dataset attuale, le voci Napolux non sovrapposte al NVdB sono:
+- `napolux_core`: provenienza dalla lista delle parole comuni;
+- `napolux_extended`: provenienza dalla lista estesa.
 
-I conteggi sono relativi al JSON attualmente versionato nel repository e possono differire dal numero di righe dei file sorgente a causa dei filtri e della normalizzazione applicati durante la preparazione.
+Queste etichette non sono equivalenti alle marche FO/AU/AD e non rappresentano una graduatoria scientifica di frequenza.
 
-## Come l'app usa oggi queste parole
+## Altri repository e risorse valutati
 
-1. **Caricamento:** `web/app.js` carica `web/vocabulary/reading-vocabulary-it.json`. Il dataset è incluso nel sito e può essere servito anche dalla cache/offline.
-2. **Filtri:** il motore seleziona le voci in base al livello scelto e ai filtri impostati dall'adulto: numero di sillabe, difficoltà ortografica, tipo di lessico (`core` / `extended`) e lunghezza massima.
-3. **Livelli:** `level` identifica una fascia di complessità ortografica approssimata. Non rappresenta una fascia scolastica certificata né una graduatoria statistica di frequenza.
-4. **Tipo di lessico:** `core` indica soltanto la provenienza dalla lista Napolux delle parole comuni; `extended` indica la provenienza dalla lista estesa. Queste etichette non equivalgono alle marche d'uso FO, AU o AD del NVdB.
-5. **Difficoltà ortografica:** `web/content-engine.js` individua in modo euristico doppie, digrammi, gruppi consonantici e parole con iniziale vocalica. Non è una classificazione linguistica certificata.
-6. **Sillabe:** il conteggio è stimato tramite gruppi vocalici; non è una sillabazione linguistica certificata.
-7. **Personalizzazione:** se viene attivata una lista personale, l'app usa le parole inserite dall'adulto al posto del repertorio predefinito, dopo un controllo di formato e una lista prudenziale di esclusione.
-8. **Sequenza:** le parole vengono mescolate e non ripetute finché non si esaurisce la selezione disponibile per il livello/filtro corrente.
+Questi progetti sono riferimenti per il dataset o per futuri arricchimenti, ma non sono fonti runtime aggiuntive oltre a quelle dichiarate sopra:
 
-## Nuovo Vocabolario di Base (NVdB) — fonte di riferimento da integrare
-
-Il **Nuovo Vocabolario di Base della lingua italiana** di Tullio De Mauro distingue le parole secondo marche d'uso, tra cui:
-- **FO — fondamentale:** parole ad altissima diffusione e centralità nell'italiano;
-- **AU — alto uso:** parole molto diffuse;
-- **AD — alta disponibilità:** parole note e disponibili nella competenza dei parlanti, anche se meno frequenti nei testi.
-
-Per TachiKids è una fonte molto più trasparente e adatta a costruire un nucleo lessicale graduato rispetto a una lista generica non documentata. In particolare, le marche FO/AU/AD permetterebbero di non confondere frequenza nei testi e disponibilità lessicale.
-
-Riferimenti:
-- Articolo e materiali sul NVdB: https://github.com/pettarin/nvdb/blob/master/article.md
-- Parser del NVdB e output JSON con qualifiche grammaticali e marche d'uso: https://github.com/aleconf/vocabolario_italiano_di_base
-- Dataset CSV del vocabolario di base: https://github.com/simo-mazzoli/vocabolario-di-base
-
-**Stato:** documentato come riferimento candidato; non ancora importato, normalizzato o usato dal codice runtime di TachiKids. Prima dell'importazione vanno verificati versione, completezza, licenza e condizioni di redistribuzione dei dati. Vanno mantenute le marche FO/AU/AD e, quando disponibili, le qualifiche grammaticali.
-
-## Altri repertori lessicali candidati
-
-Queste risorse possono servire per ampliare o confrontare il lessico, ma non risultano attualmente integrate nel JSON di TachiKids:
-
-- **Parole italiane — Napolux:** https://github.com/napolux/paroleitaliane — è la fonte effettivamente utilizzata oggi, nei due file descritti sopra.
-- **Italian words / parole italiane:** https://github.com/antomanc/italian-words-parole-italiane — lista generica candidata per confronto e ampliamento; non integrata.
-- **Italian vocabulary builder:** https://github.com/apostaremczak/italian-vocabulary-builder — progetto che aggrega definizioni, sinonimi, coniugazioni ed esempi da fonti esterne; non è il dataset di parole usato dall'app e non è integrato nel runtime.
-
-## Fonti di frequenza e lessico infantile: riferimenti per una futura validazione
-
-- **CoLFIS** (CNR / Scuola Normale Superiore): corpus di italiano scritto con quotidiani, periodici e libri, lemmatizzato e annotato per parte del discorso. È utile come riferimento di frequenza dello scritto generale, ma non specifico per bambini. Non abbiamo incorporato i suoi dati perché non è stata verificata una licenza esplicita che autorizzi la redistribuzione dentro l'app.
-  - https://www.istc.cnr.it/it/grouppage/colfis
-  - https://ricerca.sns.it/handle/11384/5677
-- **Lessico Elementare** (Marconi, Ott, Pesenti, Ratti, Tavella, 1994): riferimento particolarmente pertinente perché basato su testi letti e scritti da bambini della primaria. La letteratura descrive un Lessico Elementare di base di 6.095 parole e un Lessico di Lettura di 5.511 parole. I dati lessicali non sono stati importati.
+- https://github.com/aleconf/vocabolario_italiano_di_base — parser del PDF NVdB e JSON con qualifiche grammaticali e marche d'uso; il codice del parser ha licenza MIT, che non va automaticamente interpretata come licenza dei dati estratti.
+- https://github.com/antomanc/italian-words-parole-italiane — repertorio generico di parole italiane, non integrato.
+- https://github.com/apostaremczak/italian-vocabulary-builder — progetto per aggregare definizioni, sinonimi, coniugazioni ed esempi da fonti esterne; non è il dataset lessicale runtime di TachiKids.
+- **Lessico Elementare** (Marconi, Ott, Pesenti, Ratti, Tavella, 1994): riferimento utile per validare l'adeguatezza alla primaria; i dati non sono importati.
   - https://iris.cnr.it/handle/20.500.14243/220288
-- **ISACCO** (CNR-ILC): corpus di produzioni orali e scritte di alunni di seconda, terza e quarta primaria. È un campione di produzioni narrative degli alunni, non un corpus di libri letti. Non importato.
+- **ISACCO** (CNR-ILC): corpus di produzioni orali e scritte di alunni della primaria; non importato.
   - https://www.cnr.it/it/banche-dati-istituti/banca-dati/1026/isacco-italian-school-age-children-corpus
-- **VARLESS:** 626 nomi con frequenza nello scritto infantile tratta dal Lessico Elementare, frequenza nello scritto adulto, familiarità, immaginabilità, lunghezza e tempi di lettura. I valori non sono presenti nel dataset TachiKids.
+- **VARLESS** e **PVBVARLESS**: risorse CNR con frequenze, familiarità e altre misure; non importate.
   - https://www.istc.cnr.it/grouppage/varless
-- **PVBVARLESS:** 527 parole con frequenza nello scritto di scuola elementare, scritto adulto, parlato, immaginabilità e categoria grammaticale. Il campione deriva dal Primo Vocabolario del Bambino (18–30 mesi), quindi non rappresenta da solo la lettura della primaria. Non importato.
   - https://www.istc.cnr.it/grouppage/pvbvarless
+- **CoLFIS**: corpus di frequenza dello scritto generale, utile come confronto ma non specifico per bambini; non importato.
+  - https://www.istc.cnr.it/it/grouppage/colfis
 
-## Criteri di preparazione del dataset attuale
+## Licenze, attribuzione e limiti
 
-- Esclusi caratteri non alfabetici, parole sotto 3 o sopra 16 caratteri, termini presenti nella lista di parole volgari della fonte e alcune terminazioni tipiche di forme verbali flesse o derivazioni poco adatte.
-- Il nucleo `core` viene collocato prima del lessico esteso; le parole sono ordinate per una stima semplice della complessità (lunghezza e gruppi vocalici).
-- Le 10 fasce sono ordinate per complessità ortografica approssimata, non per frequenza statistica, età di acquisizione o livello scolastico.
-- Il repository sorgente segnala che alcune liste hanno provenienza ignota: il repertorio esteso va considerato una base lessicale da revisionare, non un dizionario normativo.
+Il dataset strutturato CSV usato per l'importazione è pubblicato da `simo-mazzoli/vocabolario-di-base`; il relativo README descrive origine, struttura e conteggi, ma il repository non espone una licenza separata e inequivocabile per il contenuto dei dati. Il repository `pettarin/nvdb` dichiara i file processati come public domain, ma aggiunge anche di rispettare i termini di servizio del NVdB e di usare i materiali per ricerca e/o scopi personali. La licenza MIT del parser di `aleconf` riguarda il codice del parser e non concede automaticamente diritti sui dati del dizionario.
 
-## Prossimo passo raccomandato
+Per questo motivo TachiKids attribuisce esplicitamente la fonte e documenta la provenienza, ma questa nota non costituisce una valutazione legale né una garanzia di licenza per redistribuzione commerciale. Prima di distribuire il dataset in un prodotto commerciale o in un servizio a pagamento è opportuno ottenere conferma sui diritti di riutilizzo e redistribuzione dei dati NVdB.
 
-Integrare il NVdB come fonte strutturata, preservando le marche FO/AU/AD, le informazioni grammaticali e la provenienza. Usare FO come primo nucleo di parole ad alta priorità, valutare AU e AD per ampliare il repertorio e tenere il lessico generico come fonte secondaria, chiaramente identificata. La progressione didattica dovrà poi combinare la marca d'uso con criteri ortografici e una revisione pedagogica: non bisogna trasformare FO/AU/AD direttamente in livelli di difficoltà di lettura.
+## Prossimi miglioramenti consigliati
 
-Prima di redistribuire dataset derivati va verificata la licenza della specifica fonte e della versione importata. I nomi delle fonti non devono essere presentati come garanzia automatica di correttezza pedagogica: ogni lista va controllata per adeguatezza all'età, ambiguità, significato e forme grammaticali.
+- Revisione umana delle parole effettivamente adatte a ciascuna fascia d'età.
+- Lista di parole concrete e familiari per i primi livelli, senza confondere frequenza con semplicità ortografica.
+- Filtri per categoria grammaticale sfruttando `pos` e `grammar`.
+- Sillabazione italiana più accurata, verificata su dizionario, al posto del solo conteggio dei gruppi vocalici.
+- Validazione con Lessico Elementare / VARLESS, se i dati e le condizioni di riutilizzo lo consentono.
