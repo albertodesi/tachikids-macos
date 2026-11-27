@@ -1025,60 +1025,98 @@ main{display:block;padding:6px 0 24px}
 }
 
 
-/* Desktop alignment: right controls start level with the left path card */
+/* Hide the redundant level hint: the descriptions are included in the select options. */
+#settings .exercise-quick-settings #levelHint { display:none !important; }
+
+/* Keep the long level labels compact without changing the mobile layout. */
 @media (min-width: 761px) {
-  #settings .settings-controls {
-    margin-top: 104px;
+  #settings .exercise-quick-settings .setting-row select#level {
+    font-size:12px !important;
+    line-height:1.2 !important;
+    font-weight:700 !important;
+    letter-spacing:-.2px !important;
+    padding:8px 10px !important;
+    width:min(360px,50%) !important;
+    max-width:360px !important;
+    min-width:0 !important;
   }
-}
-
-
-/* Desktop refinement: align right controls with the path card, not the page header. */
-@media (min-width: 1000px) {
-  #settings .settings-controls { margin-top: 36px !important; }
-  #settings .exercise-quick-settings #levelHint { display:none !important; }
-  #settings .exercise-quick-settings .setting-row select#level { width:min(430px,58%); }
-}
-@media (min-width: 761px) and (max-width: 999px) {
-  #settings .exercise-quick-settings #levelHint { display:none !important; }
 }
 @media (max-width:760px) {
-  #settings .exercise-quick-settings #levelHint { display:none !important; }
+  #settings .exercise-quick-settings .setting-row select#level {font-size:14px !important}
 }
 
-
-/* Final desktop calibration: align timing panels to the path card top edge. */
+/* Final layout: heading above one shared two-column grid.
+   The path card and the first right-hand control therefore share the same top edge. */
 @media (min-width: 1000px) {
-  #settings .settings-controls { margin-top: 78px !important; }
-  #settings .exercise-quick-settings .setting-row select#level {
-    width: min(360px, 50%) !important;
-    max-width: 360px !important;
-    min-width: 0 !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    padding: 10px 12px !important;
+  #settings > .section-heading {
+    width:calc((100% - 28px) * .55);
+    margin:0 0 12px !important;
+    padding:0 2px;
+    align-items:center;
+  }
+  #settings > .settings-layout {
+    display:grid !important;
+    grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr) !important;
+    grid-template-areas:none !important;
+    align-items:start !important;
+    gap:0 28px !important;
+    width:100%;
+  }
+  #settings > .settings-layout > .settings-primary,
+  #settings > .settings-layout > .settings-controls {
+    min-width:0 !important;
+    width:100%;
+    margin:0 !important;
+    padding:0 !important;
+    transform:none !important;
+    align-self:start !important;
+  }
+  #settings > .settings-layout > .settings-primary {
+    display:flex !important;
+    flex-direction:column;
+    gap:0;
+  }
+  #settings > .settings-layout > .settings-controls {
+    display:flex !important;
+    flex-direction:column;
+    gap:14px !important;
+  }
+  #settings .settings-primary .path-card {
+    margin:0 0 14px !important;
+    transform:none !important;
+  }
+  #settings .settings-primary .mode-tabs {
+    margin:0 0 14px !important;
+  }
+  #settings .settings-primary .exercise-quick-settings {
+    margin:0 !important;
+  }
+  #settings .settings-controls .timing-settings,
+  #settings .settings-controls .content-filters,
+  #settings .settings-controls .font-picker {
+    margin:0 !important;
   }
 }
-@media (min-width: 761px) and (max-width: 999px) {
-  #settings .exercise-quick-settings .setting-row select#level {
-    font-size: 14px !important;
-    max-width: 52% !important;
+@media (max-width: 999px) {
+  #settings > .section-heading {
+    width:100%;
+    margin:0 0 10px !important;
   }
-}
-@media (max-width: 760px) {
-  #settings .exercise-quick-settings .setting-row select#level {
-    font-size: 14px !important;
+  #settings > .settings-layout {
+    display:flex !important;
+    flex-direction:column !important;
+    gap:12px !important;
   }
-}
-
-
-/* Compact selected difficulty label: keep long level descriptions readable without crowding the control. */
-@media (min-width: 761px) {
-  #settings .exercise-quick-settings .setting-row select#level {
-    font-size: 12px !important;
-    line-height: 1.2 !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.2px !important;
-    padding: 8px 10px !important;
+  #settings > .settings-layout > .settings-primary,
+  #settings > .settings-layout > .settings-controls {
+    display:flex !important;
+    flex-direction:column;
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    transform:none !important;
   }
+  #settings .settings-primary .path-card {transform:none !important}
+  #settings .settings-controls {gap:12px !important}
 }
