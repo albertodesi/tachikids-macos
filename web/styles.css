@@ -206,3 +206,20 @@
  .reading-table-grid span{min-height:38px;font-size:16px}
  .reading-table-output{padding:8px}
 }
+
+
+/* Reading-table tools are independently collapsible */
+.table-settings{border-top:1px solid #e2eaf8;padding-top:8px;margin-top:7px}
+.table-settings>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;list-style:none;cursor:pointer;user-select:none}
+.table-settings>summary::-webkit-details-marker{display:none}
+.table-settings>summary:after{content:"＋";display:grid;place-items:center;width:26px;height:26px;flex:0 0 26px;border-radius:8px;background:#eaf1ff;color:var(--blue);font-size:19px;font-weight:800}
+.table-settings[open]>summary:after{content:"−"}
+.table-settings-state{font-size:12px;font-weight:800;color:var(--blue)}
+.table-settings[open] .table-settings-state{font-size:0}
+.table-settings[open] .table-settings-state:after{content:"Nascondi strumenti";font-size:12px}
+.table-settings-body{padding-top:8px}
+@media (min-width:1000px) and (min-height:700px){
+ .table-settings{padding-top:6px;margin-top:5px}
+ .table-settings>summary .eyebrow{font-size:12px;letter-spacing:1.4px}
+ .table-settings-state{font-size:12px}
+}
