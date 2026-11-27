@@ -1,5 +1,5 @@
-const CACHE="tachikids-web-v61";
-const CORE=["./","./index.html","./styles.css","./app.js?v=38","./content-engine.js","./manifest.webmanifest","./icon.svg","./vocabulary/reading-vocabulary-it.json"];
+const CACHE="tachikids-web-v62";
+const CORE=["./","./index.html","./styles.css","./app.js?v=39","./content-engine.js","./manifest.webmanifest","./icon.svg","./vocabulary/reading-vocabulary-it.json"];
 self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener("fetch",event=>{
