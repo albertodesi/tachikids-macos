@@ -270,20 +270,35 @@ finish=function(completed){
 renderResult=function(completed){
  if(state.mode!=="reading"){flashRenderResult(completed);return}
  const s=state.lastReadingSession||{};const stage=$("stage");
- stage.innerHTML='<div class="result reading-result"><div class="result-heading"><div class="trophy">🏆📖</div><div class="result-title-group"><h2>'+(state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p class="encouragement-message">'+getEncouragement()+'</p></div></div><p class="result-subtitle">Hai completato la tua missione di lettura!</p><div class="reading-result-stats"><div class="result-stat result-stat-primary"><strong>'+s.recognized+'</strong><span>Parole riconosciute</span></div><div class="result-stat"><strong>'+(s.uncertain+s.unreviewed)+'</strong><span>Da verificare</span></div><div class="result-stat"><strong>'+((s.durationMs||0)/1000).toFixed(1)+' s</strong><span>Durata</span></div></div><section class="result-review"><h3>Valutazione dell’adulto</h3><p>La trascrizione automatica è indicativa. Rivedi il risultato e scegli la valutazione più adatta.</p><div class="reading-assessment"><button class="option" data-rating="fluent">✓ Lettura fluida</button><button class="option" data-rating="hesitant">◐ Qualche esitazione</button><button class="option" data-rating="practice">↻ Da consolidare</button></div><p id="ratingFeedback" class="feedback">'+(s.rating?"Valutazione: "+s.rating:"Scegli una valutazione per salvare l’esito.")+'</p></section><div class="result-actions"><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div></div>';
- stage.querySelectorAll("[data-rating]").forEach(button=>button.onclick=()=>{
+ stage.innerHTML='<div class="result reading-result"><div class="result-heading"><div class="trophy">🏆📖</div><div class="result-title-group"><h2>'+(state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p class="encouragement-message">'+getEncouragement()+'</p></div></div><p class="result-subtitle">'+(completed?"Hai completato la tua missione di lettura!":"Sessione di lettura terminata.")+'</p><div class="reading-result-stats"><div class="result-stat result-stat-primary"><strong>'+(s.recognized||0)+'</strong><span>Parole riconosciute</span></div><div class="result-stat"><strong>'+((s.uncertain||0)+(s.unreviewed||0))+'</strong><span>Da verificare</span></div><div class="result-stat"><strong>'+((s.durationMs||0)/1000).toFixed(1)+' s</strong><span>Durata</span></div></div><section class="result-review"><h3>Valutazione dell’adulto</h3><p>La trascrizione automatica è indicativa. Rivedi il risultato e scegli la valutazione più adatta.</p><div class="reading-assessment"><button type="button" class="option" data-rating="fluent">✓ Lettura fluida</button><button type="button" class="option" data-rating="hesitant">◐ Qualche esitazione</button><button type="button" class="option" data-rating="practice">↻ Da consolidare</button></div><p id="ratingFeedback" class="feedback">'+(s.rating?"Valutazione: "+s.rating:"Scegli una valutazione per salvare l’esito.")+'</p></section><div class="result-actions"><button type="button" class="primary" id="again">↻ Nuova sessione</button><button type="button" class="primary secondary" id="home">⌂ Torna alla configurazione</button></div></div>';
+ stage.querySelectorAll("[data-rating]").forEach(button=>button.addEventListener("click",()=>{
   const labels={fluent:"Lettura fluida",hesitant:"Qualche esitazione",practice:"Da consolidare"};
+  if(!state.lastReadingSession)return;
   state.lastReadingSession.rating=labels[button.dataset.rating];
-  if(state.profile){const saved=state.profile.sessions[state.profile.sessions.length-1];if(saved&&saved.mode==="reading")saved.rating=state.lastReadingSession.rating;saveProfile()}
+  if(state.profile){
+   const saved=state.profile.sessions.find(item=>item.date===state.lastReadingSession.date);
+   if(saved)saved.rating=state.lastReadingSession.rating;
+   saveProfile();
+  }
   $("ratingFeedback").textContent="Valutazione salvata: "+state.lastReadingSession.rating;
-  stage.querySelectorAll("[data-rating]").forEach(b=>b.classList.toggle("correct",b===button));
- });
+  stage.querySelectorAll("[data-rating]").forEach(item=>{
+   item.classList.toggle("correct",item===button);
+   item.setAttribute("aria-pressed",item===button?"true":"false");
+  });
+ }));
  addCelebration(stage);
- $("again").onclick=()=>{$("start").click()};
- $("home").onclick=()=>{state.readingWords=[];renderProfile();show("settings")};
+ $("again").addEventListener("click",()=>{
+  stopContinuousRecognition();
+  state.readingWords=[];state.readCursor=0;state.readings=[];state.readingLastTranscript="";state.readingRating=null;state.lastReadingSession=null;
+  $("start").click();
+ });
+ $("home").addEventListener("click",()=>{
+  stopContinuousRecognition();
+  state.readingWords=[];state.readCursor=0;
+  renderProfile();show("settings");
+ });
  $("progress").style.width="100%";$("progressLabel").textContent="Sessione conclusa";
 };
-
 
 
 /* Messaggi brevi e variabili per celebrare l'impegno del bambino */
