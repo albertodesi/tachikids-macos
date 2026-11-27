@@ -1,10 +1,10 @@
 # Vocabolario TachiKids — fonti e criteri
 
 ## Contenuto
-- 9.972 lemmi/forme selezionate per esercizi di lettura.
-- 10 livelli progressivi, con 1.000 stimoli per livello.
-- 1.132 voci del file `1000_parole_italiane_comuni.txt` sono marcate `core`.
-- Le restanti voci provengono da `60000_parole_italiane.txt` e sono marcate `extended`.
+- 9.897 lemmi/forme presenti nel file verificato il 27 novembre 2026.
+- 10 fasce progressive di complessità ortografica approssimata; la numerosità varia per fascia.
+- 1.123 voci del file `1000_parole_italiane_comuni.txt` sono marcate `core` nel file verificato.
+- Le restanti 8.774 voci provengono da `60000_parole_italiane.txt` e sono marcate `extended`.
 
 ## Fonte
 Repository: https://github.com/napolux/paroleitaliane  
