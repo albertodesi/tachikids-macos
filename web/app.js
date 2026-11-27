@@ -37,7 +37,7 @@ function bank(){
 function cancel(){clearTimeout(state.timer)}
 function schedule(fn,ms){cancel();state.timer=setTimeout(fn,ms)}
 function notify(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
-function token(){return [...crypto.getRandomValues(new Uint8Array(5))].map(x=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[x%32]).join("")}
+function token(){const bytes=new Uint8Array(5);if(window.crypto&&typeof window.crypto.getRandomValues==="function")window.crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);return [...bytes].map(x=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[x%32]).join("")}
 function saveProfile(){if(!state.profile)return;localStorage.setItem(STORAGE_KEY,JSON.stringify(state.profile));}
 function loadProfile(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"null")}catch{return null}}
 function syncTimingDefaults(){const step=Math.max(0,Math.min(exposureSteps.length-1,state.profile?.step||0));const exposure=$("exposure");const pause=$("pause");if(exposure){exposure.value=String(exposureSteps[step]);$("exposureValue").textContent=(exposureSteps[step]/1000).toFixed(1)+" s"}if(pause){pause.value="1000";$("pauseValue").textContent="1.0 s"}}
@@ -47,7 +47,7 @@ function renderProfile(){if(!state.profile)return;syncTimingDefaults();$("profil
 function startProfile(name,gender){state.name=name;state.gender=gender;state.profile={token:token(),name,gender,step:0,goodStreak:0,sessions:[],created:new Date().toISOString()};saveProfile();$("hello").textContent=(gender==="boy"?"Pronto, ":"Pronta, ")+name+"!";renderProfile();show("settings")}
 function restoreProfile(){const p=loadProfile();if(!p||!p.token||!Number.isInteger(p.step))return false;state.profile=p;state.name=p.name;state.gender=p.gender;return true}
 document.querySelectorAll("[data-gender]").forEach(b=>b.addEventListener("click",()=>{state.gender=b.dataset.gender;document.querySelectorAll("[data-gender]").forEach(x=>x.classList.toggle("selected",x===b));applyTheme("welcome")}));
-$("enter").onclick=()=>{const n=$("playerName").value.trim();if(!n){notify("Scrivi il tuo nome per iniziare!");return}startProfile(n,state.gender)};
+$("enter").addEventListener("click",event=>{event.preventDefault();const n=String($("playerName").value||"").trim();if(!n){notify("Scrivi il tuo nome per iniziare!");$("playerName").focus();return}try{startProfile(n,state.gender)}catch(error){console.error("TachiKids: errore durante la creazione del profilo",error);notify("Non riesco ad avviare il profilo. Riprova tra poco.")}});
 $("playerName").addEventListener("keydown",e=>{if(e.key==="Enter")$("enter").click()});
 $("resumeProfile").onclick=()=>{if(restoreProfile()){$("hello").textContent=(state.gender==="boy"?"Bentornato, ":"Bentornata, ")+state.name+"!";renderProfile();show("settings")}};
 $("newProfile").onclick=()=>{localStorage.removeItem(STORAGE_KEY);state.profile=null;state.name="";state.gender="girl";$("playerName").value="";document.querySelectorAll("[data-gender]").forEach(x=>x.classList.toggle("selected",x.dataset.gender==="girl"));show("welcome");showNewProfileFields();applyTheme("welcome");$("playerName").focus()};
