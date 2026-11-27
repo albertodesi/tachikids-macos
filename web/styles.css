@@ -643,3 +643,58 @@ main{display:block;padding:6px 0 24px}
     bottom:auto;
   }
 }
+
+
+/* Layout correction: keep the progress card within the left column and Start centered */
+@media (min-width:761px) {
+  #settings>.settings-layout {
+    grid-template-areas:"primary controls";
+    grid-template-columns:minmax(0,1.35fr) minmax(320px,.85fr);
+    align-items:start;
+    row-gap:0;
+  }
+  #settings .settings-primary {grid-area:primary; min-height:0}
+  #settings .settings-controls {grid-area:controls}
+  #settings .session-summary {
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    margin:14px 0 0 !important;
+    padding:0;
+    min-width:0;
+  }
+  #settings .session-summary .last-session {margin:0 0 10px}
+  #settings .settings-actions {
+    display:contents !important;
+  }
+  #settings .settings-actions #start {
+    position:fixed !important;
+    z-index:60;
+    left:50% !important;
+    bottom:max(14px,env(safe-area-inset-bottom)) !important;
+    transform:translateX(-50%) !important;
+    width:min(420px,calc(100vw - 36px)) !important;
+    max-width:420px !important;
+    min-height:68px;
+    grid-area:auto;
+    grid-column:auto !important;
+    grid-row:auto !important;
+    box-shadow:0 8px 28px #244b9b45;
+  }
+  #settings:not(.hidden) {padding-bottom:104px}
+}
+@media (max-width:760px) {
+  #settings .session-summary {margin:14px 0 0}
+  #settings .settings-actions {display:contents !important}
+  #settings .settings-actions #start {
+    position:fixed !important;
+    z-index:60;
+    left:50% !important;
+    bottom:max(12px,env(safe-area-inset-bottom)) !important;
+    transform:translateX(-50%) !important;
+    width:calc(100vw - 28px) !important;
+    min-height:66px;
+    grid-area:auto;
+  }
+  #settings:not(.hidden) {padding-bottom:104px}
+}
