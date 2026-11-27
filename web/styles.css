@@ -1269,3 +1269,51 @@ main{display:block;padding:6px 0 24px}
 .reading-result > .celebration-garland { z-index:1 !important; }
 .reading-result .result-actions { position:relative !important; z-index:100 !important; }
 .reading-result .result-actions button { position:relative !important; z-index:101 !important; pointer-events:auto !important; }
+
+
+/* Voice reading: give the word the visual priority and remove secondary clutter. */
+.training:has(.reading-word) { min-height:min(82vh,900px); }
+.training:has(.reading-word) .stage {
+ flex:1 1 auto;
+ min-height:clamp(420px,68vh,760px);
+ justify-content:center;
+ align-items:center;
+ gap:0;
+ padding:28px 12px;
+}
+.training:has(.reading-word) .reading-word {
+ width:100%;
+ max-width:100%;
+ margin:0 auto;
+ padding:0 8px;
+ font-size:clamp(88px,16vw,230px) !important;
+ line-height:1.02;
+ letter-spacing:.015em;
+ overflow-wrap:anywhere;
+ text-align:center;
+}
+.training:has(.reading-word) .speech-status {
+ display:inline-flex;
+ align-items:center;
+ gap:7px;
+ margin:26px auto 0;
+ padding:5px 11px;
+ border-radius:999px;
+ background:#f3f6fc;
+ color:#7b879c;
+ font-size:12px;
+ line-height:1.2;
+ font-weight:600;
+}
+.training:has(.reading-word) .speech-status:before {
+ content:"";
+ width:7px;height:7px;border-radius:50%;
+ background:#35a477;
+}
+.training:has(.reading-word) .training-bottom { display:none; }
+@media(max-width:650px){
+ .training:has(.reading-word) { min-height:calc(100svh - 100px); padding:12px; }
+ .training:has(.reading-word) .stage { min-height:calc(72svh - 60px); padding:20px 4px; }
+ .training:has(.reading-word) .reading-word { font-size:clamp(72px,18vw,128px) !important; }
+ .training:has(.reading-word) .speech-status { margin-top:20px; font-size:11px; }
+}
