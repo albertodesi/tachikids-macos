@@ -116,19 +116,12 @@ render=function(){
  $("progress").style.width=state.count?Math.min(100,state.index/state.count*100)+"%":"0%";
  const stage=$("stage");stage.innerHTML="";
  if(state.mode==="reading"){
-  const word=document.createElement("div");word.className="stimulus reading-word";word.textContent=state.current;word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);
-  const help=document.createElement("p");help.className="reading-help";help.textContent="Leggi la parola ad alta voce. Un adulto può valutare oppure usare il microfono.";stage.append(help);
-  const mic=document.createElement("button");mic.className="primary mic-button";mic.textContent=state.speechStatus==="listening"?"■ Ferma ascolto":(speechConstructor()?"🎙️ Leggi con il microfono":"Microfono non disponibile");mic.disabled=!speechConstructor()||!!state.answer;mic.onclick=()=>state.speechStatus==="listening"?stopSpeech():startSpeech();stage.append(mic);const privacy=document.createElement("p");privacy.className="reading-help";privacy.textContent="Privacy: l’app non registra né conserva file audio. Il riconoscimento dipende dal browser e può inviare l’audio al suo servizio; chiedi il consenso prima di attivare il microfono.";stage.append(privacy);
-  if(state.speechStatus){const status=document.createElement("p");status.className="speech-status";status.textContent=state.speechStatus==="listening"?"Ti ascolto…":state.speechStatus;stage.append(status)}
-  if(state.transcript){const transcript=document.createElement("p");transcript.className="transcript";transcript.textContent="Trascrizione: "+state.transcript;stage.append(transcript);const matched=normalizeSpeech(state.transcript).split("/").some(x=>x.trim()===normalizeSpeech(state.current));const verdict=document.createElement("p");verdict.className="speech-status";verdict.textContent=matched?"La parola sembra corrispondere. L'adulto conferma la valutazione.":"La trascrizione non coincide: verifica l'ascolto e valuta manualmente.";stage.append(verdict)}
-  const label=document.createElement("p");label.className="reading-help";label.textContent="Valutazione dell'adulto";stage.append(label);
-  const controls=document.createElement("div");controls.className="reading-assessment";
-  [["correct","✓ Letta correttamente"],["assisted","◐ Con aiuto"],["retry","↻ Da riprovare"]].forEach(([value,text])=>{const button=document.createElement("button");button.className="option";button.textContent=text;button.disabled=!!state.answer;button.onclick=()=>assessReading(value);controls.append(button)});stage.append(controls);
-  if(state.answer){const feedback=document.createElement("p");feedback.className="feedback";feedback.textContent=state.answer==="correct"?"Ottimo!":state.answer==="assisted"?"Bene, con un piccolo aiuto.":"Riproveremo insieme.";stage.append(feedback);const nextButton=document.createElement("button");nextButton.className="next-button";nextButton.textContent="Prossima parola";nextButton.onclick=next;stage.append(nextButton)}
-  return;
- }
- if(state.waiting){const q=document.createElement("div");q.className="ready";q.textContent=state.mode==="syllables"?"Quale sillaba hai visto?":"Quale parola hai visto?";stage.append(q);const opts=document.createElement("div");opts.className="options";state.choices.forEach(word=>{const button=document.createElement("button");button.className="option";button.textContent=word;if(state.answer!==null){button.disabled=true;if(word===state.current)button.classList.add("correct");else if(word===state.answer)button.classList.add("wrong")}button.onclick=()=>choose(word);opts.append(button)});stage.append(opts);if(state.answer!==null){const feedback=document.createElement("div");feedback.className="feedback";feedback.textContent=state.answer===state.current?"Esatto! ⭐":"Quasi! La risposta era "+state.current;stage.append(feedback);const nextButton=document.createElement("button");nextButton.className="next-button";nextButton.textContent="Continua";nextButton.onclick=next;stage.append(nextButton)}return}
- if(state.visible){const word=document.createElement("div");word.className="stimulus";word.textContent=state.current;word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word)}else{const ready=document.createElement("div");ready.className="ready";ready.textContent="Preparati…";stage.append(ready)}
+  const word=document.createElement("div");word.className="stimulus reading-word";word.textContent=state.current;stage.append(word);
+ // One discreet microphone indicator; the word remains the only main stimulus.
+ const status=document.createElement("p");status.className="speech-status";
+ const statusText=state.speechStatus||"Attivazione del microfono…";
+ status.textContent=/not available|non disponibile/i.test(statusText)?"Microfono non disponibile":/not-allowed|negato|non autorizzato/i.test(statusText)?"Microfono non autorizzato":/ripristino|riprovo|attivazione/i.test(statusText)?"Connessione microfono…":"In ascolto";
+ status.setAttribute("aria-live","polite");stage.append(status);
 };
 finish=function(completed){
  cancel();stopSpeech();state.visible=false;state.waiting=false;
