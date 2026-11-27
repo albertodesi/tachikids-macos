@@ -552,3 +552,94 @@ main{display:block;padding:6px 0 24px}
     transform: translateY(-6px);
   }
 }
+
+
+/* TachiKids identity and gender-aware colour system */
+:root[data-theme="boy"] {
+  --blue:#3569cf;
+  --navy:#25365d;
+  --orange:#ff9b42;
+  --muted:#75819a;
+  --accent-soft:#e9f0ff;
+  --accent-border:#8ba9ed;
+}
+:root[data-theme="girl"] {
+  --blue:#d65b91;
+  --navy:#593047;
+  --orange:#f2a0bd;
+  --muted:#8d7181;
+  --accent-soft:#fff0f6;
+  --accent-border:#e9a8c5;
+}
+:root[data-theme="welcome"] {
+  --blue:#e58a22;
+  --navy:#543b1b;
+  --orange:#f5b52e;
+  --muted:#8c7655;
+  --accent-soft:#fff3d8;
+  --accent-border:#f1c36b;
+}
+:root[data-theme="welcome"] body {
+  background:radial-gradient(circle at 8% 5%,#fff0c8 0,transparent 38%),linear-gradient(140deg,#fff7e5,#fff1df);
+}
+:root[data-theme="welcome"] .eyebrow,
+:root[data-theme="welcome"] .text-button {color:#df851c}
+:root[data-theme="welcome"] .primary {
+  background:linear-gradient(110deg,#ffb52e,#f28a24);
+  box-shadow:0 7px 16px #e58a2235;
+}
+:root[data-theme="welcome"] .choice.selected {
+  background:#fff0cc;border-color:#efb54b;color:#92520d;
+}
+:root[data-theme="girl"] .primary {
+  background:linear-gradient(110deg,#e878a8,#c84d86);
+  box-shadow:0 7px 16px #d65b9135;
+}
+:root[data-theme="girl"] .choice.selected,
+:root[data-theme="girl"] .mode-tabs button.active,
+:root[data-theme="girl"] .font-size-option.selected,
+:root[data-theme="girl"] .font-size-option[aria-pressed=true] {
+  background:#fff0f6;border-color:#df83ad;color:#a63c70;
+}
+:root[data-theme="boy"] .choice.selected,
+:root[data-theme="boy"] .mode-tabs button.active,
+:root[data-theme="boy"] .font-size-option.selected,
+:root[data-theme="boy"] .font-size-option[aria-pressed=true] {
+  background:#e9f0ff;border-color:#8ba9ed;color:#2457b8;
+}
+.brand-icon {
+  display:block;
+  object-fit:contain;
+  background:#fff;
+  border-radius:16px;
+  padding:5px;
+  box-shadow:0 5px 18px #284b8614;
+}
+@media (min-width:1000px) {
+  /* Keep the personal progress directly under the left column, not below the taller controls column. */
+  #settings>.settings-layout {
+    grid-template-areas:"primary controls" "summary start" !important;
+    align-items:start;
+    row-gap:14px;
+  }
+  #settings .settings-actions {display:contents !important}
+  #settings .session-summary {
+    grid-area:summary;
+    align-self:start;
+    margin:0 !important;
+    padding-top:2px;
+  }
+  #settings .settings-actions #start {
+    grid-area:start;
+    grid-column:auto !important;
+    grid-row:auto !important;
+    position:sticky;
+    top:16px;
+    align-self:start;
+    width:100%;
+    max-width:none;
+    transform:none;
+    left:auto;
+    bottom:auto;
+  }
+}
