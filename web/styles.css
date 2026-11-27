@@ -95,3 +95,9 @@
 @keyframes confetti-spiral-burst{0%{opacity:0;transform:translate(0,0) scale(.2) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.8) rotate(900deg)}}
 @media(max-width:520px){.celebration-result{padding-top:62px!important}.celebration-result>.celebration-garland{top:-22px;left:-4%;right:-4%}.celebration-result>.celebration-garland .garland-flag{font-size:21px;width:27px}}
 @media(prefers-reduced-motion:reduce){.garland-launch-left,.garland-launch-right,.garland-pop,.garland-drop,.celebration-burst .confetti-shot,.celebration-burst .confetti-firework,.celebration-burst .confetti-spiral{animation:none!important;opacity:1}}
+
+/* Effetti celebrativi nello stesso piano del riquadro finale, sopra ai complimenti */
+.celebration-result{position:relative;isolation:isolate;overflow:visible}
+.celebration-result>.celebration-confetti{position:absolute;inset:-14px;z-index:20;overflow:hidden;pointer-events:none;border-radius:28px}
+.celebration-result>.celebration-confetti .celebration-burst{position:absolute;inset:0;overflow:hidden}
+.celebration-result>.celebration-garland{z-index:30}
