@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#eef4ff"><meta name="description" content="TachiKids: giochi di lettura per la scuola primaria"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./styles.css?v=20"><title>TachiKids</title></head>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#eef4ff"><meta name="description" content="TachiKids: giochi di lettura per la scuola primaria"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./styles.css?v=21"><title>TachiKids</title></head>
 <body><div class="app-shell"><header class="topbar"><div class="brand"><span class="brand-icon">◉</span><div><h1>TachiKids</h1><p>Occhi pronti? Si gioca con le parole!</p></div></div><span class="offline" id="connection">● Online</span></header>
 <main><section class="panel welcome" id="welcome"><div class="mascot">👀</div><p class="eyebrow">PICCOLE SFIDE, GRANDI PROGRESSI</p><h2>Ciao! Come ti chiami?</h2><div class="resume-box hidden" id="resumeBox"><p>Abbiamo ritrovato il tuo percorso, <strong id="resumeName"></strong>.</p><p class="muted">Codice locale: <strong id="resumeToken"></strong></p><button class="primary" id="resumeProfile">Riprendi il percorso</button><button class="text-button" id="newProfile">Inizia un nuovo percorso</button></div><input id="playerName" maxlength="24" placeholder="Scrivi qui il tuo nome" aria-label="Il tuo nome"><div class="gender"><button class="choice selected" data-gender="girl">Femminuccia</button><button class="choice" data-gender="boy">Maschietto</button></div><p class="muted">Preparati a una super avventura di parole, sillabe e memoria!</p><button class="primary" id="enter">Andiamo! →</button></section>
 <section class="panel hidden" id="settings"><div class="section-heading"><div><p class="eyebrow">AREA ALLENAMENTO</p><h2 id="hello">Ci sei?</h2></div><button class="text-button" id="changeName">Cambia nome</button></div><div class="path-card"><div class="path-top"><strong>Il tuo percorso</strong><span id="pathStatus">Step 1 di 6</span></div><div class="progress path-progress"><span id="pathProgress"></span></div><p class="muted">Il tempo si riduce gradualmente solo quando il riconoscimento è stabile. Il percorso si adatta ai risultati delle sessioni.</p><p class="muted">Codice di ripresa: <strong id="profileToken"></strong> · salvato su questo dispositivo</p></div><div class="mode-tabs"><button class="active" data-mode="words">Parole</button><button data-mode="syllables">Sillabe</button><button data-mode="memory">Memoria</button><button data-mode="reading">Leggi ad alta voce</button></div>
@@ -20,9 +20,14 @@
    <label class="custom-toggle"><input type="checkbox" id="adaptiveTiming"> Regola il tempo in base alle sillabe</label>
   </div>
  </details>
- <div class="table-tools"><button class="text-button" id="generateTable" type="button">▦ Crea tabella di lettura</button><label>Griglia<select id="tableSize"><option value="3x4">3 × 4</option><option value="4x4">4 × 4</option><option value="5x5">5 × 5</option></select></label></div>
- <div id="readingTableOutput" class="reading-table-output hidden"></div>
- <small id="vocabularyStatus">Caricamento vocabolario…</small>
+ <details class="table-settings">
+  <summary><span class="eyebrow">TABELLA DI LETTURA</span><span class="table-settings-state">Mostra strumenti</span></summary>
+  <div class="table-settings-body">
+   <div class="table-tools"><button class="text-button" id="generateTable" type="button">▦ Crea tabella di lettura</button><label>Griglia<select id="tableSize"><option value="3x4">3 × 4</option><option value="4x4">4 × 4</option><option value="5x5">5 × 5</option></select></label></div>
+   <div id="readingTableOutput" class="reading-table-output hidden"></div>
+   <small id="vocabularyStatus">Caricamento vocabolario…</small>
+  </div>
+ </details>
 </div>
 <div class="settings-grid"><label>Carattere (px)<input id="fontSize" type="number" min="36" max="140" value="86"></label></div>
 <div class="setting-row"><label for="count">Numero stimoli</label><select id="count"><option selected>10</option><option>20</option><option>30</option><option>50</option><option value="0">Illimitati</option></select></div>
