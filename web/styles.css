@@ -1123,3 +1123,59 @@ main{display:block;padding:6px 0 24px}
   #settings .settings-primary .path-card {transform:none !important}
   #settings .settings-controls {gap:12px !important}
 }
+
+
+/* Compact and normalize the difficulty / stimulus-count controls. */
+#settings .exercise-quick-settings {
+  gap:10px !important;
+  margin:0 0 14px !important;
+}
+#settings .exercise-quick-settings .setting-row {
+  min-height:60px !important;
+  padding:9px 16px !important;
+  gap:14px !important;
+  border-radius:14px !important;
+}
+#settings .exercise-quick-settings .setting-row label {
+  font-size:17px !important;
+  line-height:1.25 !important;
+  font-weight:800 !important;
+  flex:1 1 auto;
+}
+#settings .exercise-quick-settings .setting-row select,
+#settings .exercise-quick-settings .setting-row select#level {
+  box-sizing:border-box;
+  flex:0 1 250px;
+  width:250px !important;
+  max-width:48% !important;
+  min-width:0 !important;
+  min-height:44px !important;
+  height:44px !important;
+  padding:8px 12px !important;
+  border-radius:11px !important;
+  font-size:15px !important;
+  line-height:1.25 !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+}
+@media(max-width:760px) {
+  #settings .exercise-quick-settings {gap:8px !important}
+  #settings .exercise-quick-settings .setting-row {
+    min-height:54px !important;
+    padding:8px 11px !important;
+    gap:8px !important;
+  }
+  #settings .exercise-quick-settings .setting-row label {
+    font-size:15px !important;
+  }
+  #settings .exercise-quick-settings .setting-row select,
+  #settings .exercise-quick-settings .setting-row select#level {
+    flex:0 1 48%;
+    width:48% !important;
+    max-width:48% !important;
+    min-height:40px !important;
+    height:40px !important;
+    padding:7px 9px !important;
+    font-size:13px !important;
+  }
+}
