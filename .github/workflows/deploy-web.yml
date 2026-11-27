@@ -4,7 +4,6 @@ on:
     branches: [main]
     paths:
       - 'web/**'
-      - 'Sources/TachiKids/Resources/reading-vocabulary-it.json'
       - '.github/workflows/deploy-web.yml'
   workflow_dispatch:
 permissions:
@@ -27,9 +26,8 @@ jobs:
           enablement: true
       - name: Prepare site
         run: |
-          mkdir -p _site/vocabulary
+          mkdir -p _site
           cp -R web/. _site/
-          cp Sources/TachiKids/Resources/reading-vocabulary-it.json _site/vocabulary/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
