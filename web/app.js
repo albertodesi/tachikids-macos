@@ -289,32 +289,39 @@ renderResult=function(completed){
   });
  }));
  addCelebration(stage);
- // Azioni finali esplicite: la nuova sessione riparte dalla configurazione corrente.
- $("again").onclick=event=>{
-  event.preventDefault();
-  event.stopPropagation();
-  stopContinuousRecognition();
-  cancel();
-  state.readingWords=[];state.readCursor=0;state.readings=[];state.readingLastTranscript="";state.readingRating=null;state.lastReadingSession=null;
-  state.readingStartedAt=0;state.readingRecognitionActive=false;state.readingRecognition=null;
-  show("settings");
-  $("start").click();
- };
- $("home").onclick=event=>{
-  event.preventDefault();
-  event.stopPropagation();
-  stopContinuousRecognition();
-  cancel();
-  state.readingWords=[];state.readCursor=0;state.readingLastTranscript="";state.readingRating=null;state.lastReadingSession=null;
-  renderProfile();
-  show("settings");
-  window.scrollTo({top:0,behavior:"smooth"});
- };
+ // Le azioni sono gestite dal listener delegato sullo stage.
  $("progress").style.width="100%";$("progressLabel").textContent="Sessione conclusa";
 };
 
+// Event delegation in capture: controls remain functional after dynamic result rendering.
+$("stage").addEventListener("click",event=>{
+ const button=event.target.closest("#again, #home");
+ if(!button)return;
+ event.preventDefault();
+ event.stopPropagation();
+ event.stopImmediatePropagation();
+ try{
+  stopContinuousRecognition();
+  cancel();
+  state.readingWords=[];state.readCursor=0;state.readings=[];
+  state.readingLastTranscript="";state.readingRating=null;state.lastReadingSession=null;
+  state.readingStartedAt=0;state.readingRecognitionActive=false;
+  if(button.id==="again"){
+   show("settings");
+   $("start").click();
+  }else{
+   renderProfile();
+   show("settings");
+   window.scrollTo({top:0,behavior:"smooth"});
+  }
+ }catch(error){
+  console.error("TachiKids: errore nell'azione finale della lettura",error);
+  notify("Non riesco a completare l'azione. Riprova.");
+ }
+},true);
 
-/* Messaggi brevi e variabili per celebrare l'impegno del bambino */
+
+ /* Messaggi brevi e variabili per celebrare l'impegno del bambino */
 function getEncouragement(){
  const girl=state.gender!=="boy";
  const messages=girl?["BRAVA","WOW","SUPER","MITICA","FANTASTICA","GRANDE","EVVIVA","FORMIDABILE","URRÀ","SPETTACOLARE"]:["BRAVO","WOW","SUPER","MITICO","FANTASTICO","GRANDE","EVVIVA","FORMIDABILE","URRÀ","SPETTACOLARE"];
