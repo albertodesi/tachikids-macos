@@ -34,6 +34,11 @@ function bank(){
   return true;
  }).map(x=>x.word.toLocaleUpperCase("it-IT"));
 }
+function fitSingleLine(el,maxSize=state.font,minSize=16){
+ el.style.whiteSpace="nowrap";el.style.overflowWrap="normal";el.style.wordBreak="keep-all";el.style.display="block";el.style.width="100%";el.style.maxWidth="100%";
+ let size=maxSize;el.style.setProperty("font-size",size+"px","important");
+ while(el.scrollWidth>el.clientWidth+1&&size>minSize){size=Math.max(minSize,size-1);el.style.setProperty("font-size",size+"px","important")}
+}
 function cancel(){clearTimeout(state.timer)}
 function schedule(fn,ms){cancel();state.timer=setTimeout(fn,ms)}
 function notify(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
@@ -62,8 +67,8 @@ $("start").onclick=()=>{if(!state.profile&&!restoreProfile()){notify("Crea prima
 $("stop").onclick=()=>finish(false);
 function next(){cancel();if(state.count&&state.index>=state.count){finish(true);return}state.index++;state.answer=null;state.waiting=false;const b=bank();if(!state.queue.length)state.queue=shuffle(b);state.current=state.queue.shift();state.choices=shuffle([state.current,...shuffle(b.filter(w=>w!==state.current)).slice(0,3)]);state.visible=true;render();schedule(()=>{state.visible=false;state.waiting=true;render()},state.exposure)}
 function render(){const total=state.count?" / "+state.count:"";$("progressLabel").textContent=state.name+", stimolo "+state.index+total;$("progress").style.width=state.count?Math.min(100,state.index/state.count*100)+"%":"0%";const stage=$("stage");stage.innerHTML="";
-if(state.waiting){const q=document.createElement("div");q.className="ready";q.textContent=state.mode==="syllables"?"Quale sillaba hai visto?":"Quale parola hai visto?";stage.append(q);const opts=document.createElement("div");opts.className="options";state.choices.forEach(word=>{const b=document.createElement("button");b.className="option";b.textContent=word;if(state.answer!==null){b.disabled=true;if(word===state.current)b.classList.add("correct");else if(word===state.answer)b.classList.add("wrong")}b.onclick=()=>choose(word);opts.append(b)});stage.append(opts);if(state.answer!==null){const f=document.createElement("div");f.className="feedback";f.textContent=state.answer===state.current?"Esatto! ⭐":"Quasi! La risposta era "+state.current;f.style.color=state.answer===state.current?"#27865b":"#e58a35";stage.append(f);const n=document.createElement("button");n.className="next-button";n.textContent="Continua";n.onclick=next;stage.append(n)}return}
-if(state.visible){const w=document.createElement("div");w.className="stimulus";w.textContent=state.current;w.style.fontSize="min("+state.font+"px, 18vw)";stage.append(w)}else{const r=document.createElement("div");r.className="ready";r.textContent="Preparati…";stage.append(r)}}
+if(state.waiting){const q=document.createElement("div");q.className="ready";q.textContent=state.mode==="syllables"?"Quale sillaba hai visto?":"Quale parola hai visto?";stage.append(q);const opts=document.createElement("div");opts.className="options";state.choices.forEach(word=>{const b=document.createElement("button");b.className="option";b.textContent=word;if(state.answer!==null){b.disabled=true;if(word===state.current)b.classList.add("correct");else if(word===state.answer)b.classList.add("wrong")}b.onclick=()=>choose(word);opts.append(b);fitSingleLine(b,30,14)});stage.append(opts);if(state.answer!==null){const f=document.createElement("div");f.className="feedback";f.textContent=state.answer===state.current?"Esatto! ⭐":"Quasi! La risposta era "+state.current;f.style.color=state.answer===state.current?"#27865b":"#e58a35";stage.append(f);const n=document.createElement("button");n.className="next-button";n.textContent="Continua";n.onclick=next;stage.append(n)}return}
+if(state.visible){const w=document.createElement("div");w.className="stimulus";w.textContent=state.current;w.style.fontSize="min("+state.font+"px, 18vw)";stage.append(w);fitSingleLine(w)}else{const r=document.createElement("div");r.className="ready";r.textContent="Preparati…";stage.append(r)}}
 function choose(v){if(state.answer!==null)return;state.answer=v;if(v===state.current)state.correct++;state.sessionResults.push(v===state.current);render()}
 function finish(completed){cancel();state.visible=false;state.waiting=false;if(completed&&state.index){const accuracy=Math.round(state.correct/state.index*100);const p=state.profile;p.sessions.push({date:new Date().toISOString(),mode:state.mode,level:state.level,total:state.index,correct:state.correct,accuracy,exposure:state.exposure});if(p.sessions.length>100)p.sessions=p.sessions.slice(-100);
 if(accuracy>=90){p.goodStreak++;if(p.goodStreak>=2&&p.step<exposureSteps.length-1){p.step++;p.goodStreak=0;p.feedback="Ottimo lavoro: nel prossimo allenamento proverai un tempo leggermente più rapido."}else p.feedback="Ottimo risultato: ripeti ancora questo livello per consolidarlo."}
@@ -117,7 +122,7 @@ render=function(){
  $("progress").style.width=state.count?Math.min(100,state.index/state.count*100)+"%":"0%";
  const stage=$("stage");stage.innerHTML="";
  if(state.mode==="reading"){
-  const word=document.createElement("div");word.className="stimulus reading-word";word.textContent=state.current;stage.append(word);
+  const word=document.createElement("div");word.className="stimulus reading-word";word.textContent=state.current;stage.append(word);fitSingleLine(word);
  // One discreet microphone indicator; the word remains the only main stimulus.
  const status=document.createElement("p");status.className="speech-status";
  const statusText=state.speechStatus||"Attivazione del microfono…";
@@ -242,7 +247,7 @@ render=function(){
  $("progressLabel").textContent=state.name+" · parola "+Math.min(state.readCursor+1,total)+" / "+total;
  $("progress").style.width=Math.min(100,state.readCursor/total*100)+"%";
  const stage=$("stage");stage.innerHTML="";
- const word=document.createElement("div");word.className="stimulus reading-word";word.textContent=state.current;word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);
+ const word=document.createElement("div");word.className="stimulus reading-word";word.textContent=state.current;word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);fitSingleLine(word);
  const help=document.createElement("p");help.className="reading-help";help.textContent="Leggi ad alta voce e passa naturalmente alla parola successiva: TachiKids resta in ascolto.";stage.append(help);
  const status=document.createElement("p");status.className="speech-status";status.textContent=state.speechStatus||"Attivazione del microfono…";stage.append(status);
  const transcript=document.createElement("p");transcript.className="transcript";transcript.textContent=state.readingLastTranscript?"Ultimo riconoscimento: "+state.readingLastTranscript:"Il testo riconosciuto non viene conservato nel riepilogo.";stage.append(transcript);
@@ -418,7 +423,7 @@ render=function(){
  const stage=$("stage");stage.innerHTML="";
  if(state.visible){
   const word=document.createElement("div");word.className="stimulus";word.textContent=state.current;
-  word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);
+  word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);fitSingleLine(word);
  }
 };
 finish=function(completed){
