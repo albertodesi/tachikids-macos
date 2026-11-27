@@ -1179,3 +1179,28 @@ main{display:block;padding:6px 0 24px}
     font-size:13px !important;
   }
 }
+
+
+/* Clean, consistent dropdown chevrons for difficulty and stimulus count. */
+#settings .exercise-quick-settings .setting-row select {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  background-color:#f9fbff !important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23546580' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat:no-repeat !important;
+  background-position:right 13px center !important;
+  background-size:16px 16px !important;
+  padding-right:38px !important;
+  cursor:pointer;
+}
+#settings .exercise-quick-settings .setting-row select:focus-visible {
+  outline:2px solid #8ba9ed;
+  outline-offset:2px;
+}
+@media(max-width:760px) {
+  #settings .exercise-quick-settings .setting-row select {
+    background-position:right 9px center !important;
+    background-size:14px 14px !important;
+    padding-right:29px !important;
+  }
+}
