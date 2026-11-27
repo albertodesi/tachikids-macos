@@ -1317,3 +1317,10 @@ main{display:block;padding:6px 0 24px}
  .training:has(.reading-word) .reading-word { font-size:clamp(72px,18vw,128px) !important; }
  .training:has(.reading-word) .speech-status { margin-top:20px; font-size:11px; }
 }
+
+
+/* Keep every displayed word on one line and fit it to the available width. */
+.stimulus,.reading-word,.option{white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;}
+.stimulus,.reading-word{width:100%;max-width:100%;overflow:hidden;text-align:center;}
+.options{width:100%;min-width:0;}
+.option{min-width:0;width:100%;overflow:hidden;text-overflow:clip;font-size:clamp(14px,4vw,28px);}
