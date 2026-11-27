@@ -1023,3 +1023,11 @@ main{display:block;padding:6px 0 24px}
   #settings .exercise-quick-settings .setting-row select {width:auto;max-width:48%;min-height:42px;font-size:15px}
   #settings .exercise-quick-settings #levelHint {font-size:13px}
 }
+
+
+/* Desktop alignment: right controls start level with the left path card */
+@media (min-width: 761px) {
+  #settings .settings-controls {
+    margin-top: 104px;
+  }
+}
