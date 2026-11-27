@@ -289,16 +289,27 @@ renderResult=function(completed){
   });
  }));
  addCelebration(stage);
- $("again").addEventListener("click",()=>{
+ // Azioni finali esplicite: la nuova sessione riparte dalla configurazione corrente.
+ $("again").onclick=event=>{
+  event.preventDefault();
+  event.stopPropagation();
   stopContinuousRecognition();
+  cancel();
   state.readingWords=[];state.readCursor=0;state.readings=[];state.readingLastTranscript="";state.readingRating=null;state.lastReadingSession=null;
+  state.readingStartedAt=0;state.readingRecognitionActive=false;state.readingRecognition=null;
+  show("settings");
   $("start").click();
- });
- $("home").addEventListener("click",()=>{
+ };
+ $("home").onclick=event=>{
+  event.preventDefault();
+  event.stopPropagation();
   stopContinuousRecognition();
-  state.readingWords=[];state.readCursor=0;
-  renderProfile();show("settings");
- });
+  cancel();
+  state.readingWords=[];state.readCursor=0;state.readingLastTranscript="";state.readingRating=null;state.lastReadingSession=null;
+  renderProfile();
+  show("settings");
+  window.scrollTo({top:0,behavior:"smooth"});
+ };
  $("progress").style.width="100%";$("progressLabel").textContent="Sessione conclusa";
 };
 
