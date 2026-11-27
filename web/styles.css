@@ -312,3 +312,7 @@ footer{font-size:12px;line-height:1.4}
  .settings-layout{display:block}
  .settings-actions{display:block}
 }
+
+@media (min-width:1000px) and (min-height:700px){
+ #settings:not(.hidden){height:100%;max-height:100%;min-height:0}
+}
