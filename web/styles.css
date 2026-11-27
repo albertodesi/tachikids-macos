@@ -69,3 +69,6 @@
 /* Modalità Parole e Sillabe: nessuna distrazione sotto lo stimolo */
 .training.focus-sequence .training-bottom{display:none}
 .training.focus-sequence .stage{min-height:340px}
+
+/* Festoni sopra il pannello finale, non dietro al testo */
+.stage .celebration-garland{z-index:8;top:-18px;pointer-events:none}
