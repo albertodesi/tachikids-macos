@@ -276,35 +276,68 @@ function getEncouragement(){
 function addCelebration(stage){
  stage.classList.add("celebration-stage");
  const layer=document.createElement("div");layer.className="celebration-confetti";layer.setAttribute("aria-hidden","true");
- const garland=document.createElement("div");garland.className="celebration-garland";
- ["🎉","⭐","🎈","✦","🎊","⭐","🎈","✦","🎉"].forEach((symbol,index)=>{const flag=document.createElement("span");flag.className="garland-flag flag-"+(index%5);flag.textContent=symbol;garland.append(flag)});
  const burst=document.createElement("div");burst.className="celebration-burst";
- for(let i=0;i<88;i++){
-  const piece=document.createElement("i");piece.className="confetti-piece";
-  piece.style.setProperty("--x",(Math.random()*100)+"%");
-  piece.style.setProperty("--delay",(Math.random()*1.15)+"s");
-  piece.style.setProperty("--duration",(2.5+Math.random()*2.2)+"s");
-  piece.style.setProperty("--rotation",(Math.random()*1080-540)+"deg");
-  piece.style.setProperty("--drift",(Math.random()*240-120)+"px");
-  piece.style.setProperty("--size",(6+Math.random()*9)+"px");
-  piece.classList.add(["confetti-blue","confetti-orange","confetti-yellow","confetti-pink","confetti-green"][i%5]);
+ const effects=["cannon-left","cannon-right","cannon-dual","fireworks","spiral","shower"];
+ const effect=effects[Math.floor(Math.random()*effects.length)];
+ burst.classList.add("effect-"+effect);
+ const palette=["confetti-blue","confetti-orange","confetti-yellow","confetti-pink","confetti-green"];
+ for(let i=0;i<76;i++){
+  const piece=document.createElement("i");
+  const cannon=effect.startsWith("cannon");
+  const firework=effect==="fireworks"||effect==="spiral";
+  piece.className="confetti-piece "+palette[i%palette.length];
+  piece.style.setProperty("--size",(6+Math.random()*10)+"px");
+  piece.style.setProperty("--delay",(Math.random()*.65)+"s");
+  piece.style.setProperty("--rotation",(Math.random()*1440-720)+"deg");
+  if(cannon){
+   const side=effect==="cannon-left"?0:effect==="cannon-right"?100:(i%2?0:100);
+   piece.classList.add("confetti-shot");
+   piece.style.left=side+"%";piece.style.top=(68+Math.random()*20)+"%";
+   piece.style.setProperty("--dx",((side===0?1:-1)*(100+Math.random()*250))+"px");
+   piece.style.setProperty("--dy",(-180-Math.random()*300)+"px");
+   piece.style.setProperty("--fall",(180+Math.random()*260)+"px");
+   piece.style.setProperty("--duration",(1.6+Math.random()*1.4)+"s");
+  }else if(firework){
+   piece.classList.add(effect==="spiral"?"confetti-spiral":"confetti-firework");
+   piece.style.left=(20+Math.random()*60)+"%";piece.style.top=(22+Math.random()*38)+"%";
+   const angle=Math.random()*Math.PI*2, distance=90+Math.random()*190;
+   piece.style.setProperty("--dx",Math.cos(angle)*distance+"px");
+   piece.style.setProperty("--dy",Math.sin(angle)*distance+"px");
+   piece.style.setProperty("--duration",(1.2+Math.random()*1.1)+"s");
+  }else{
+   piece.classList.add("confetti-rain");
+   piece.style.left=Math.random()*100+"%";piece.style.top="-22px";
+   piece.style.setProperty("--drift",(Math.random()*280-140)+"px");
+   piece.style.setProperty("--duration",(2.2+Math.random()*2)+"s");
+  }
   burst.append(piece);
  }
- for(let i=0;i<14;i++){
+ for(let i=0;i<16;i++){
   const star=document.createElement("b");star.className="celebration-star";star.textContent=i%2?"✦":"★";
   star.style.setProperty("--sx",(Math.random()*100)+"%");
-  star.style.setProperty("--sd",(Math.random()*1.3)+"s");
-  star.style.setProperty("--ss",(18+Math.random()*22)+"px");
+  star.style.setProperty("--sd",(Math.random()*1.1)+"s");
+  star.style.setProperty("--ss",(18+Math.random()*24)+"px");
   burst.append(star);
  }
- layer.append(burst);stage.prepend(layer);stage.append(garland);
- const result=stage.querySelector(".result");if(result)result.classList.add("celebration-result");
+ layer.append(burst);stage.prepend(layer);
+ const result=stage.querySelector(".result");
+ if(result){
+  result.classList.add("celebration-result");
+  const garland=document.createElement("div");garland.className="celebration-garland";
+  const entrances=["garland-launch-left","garland-launch-right","garland-pop","garland-drop"];
+  garland.classList.add(entrances[Math.floor(Math.random()*entrances.length)]);
+  ["🎉","⭐","🎈","✦","🎊","⭐","🎈","✦","🎉"].forEach((symbol,index)=>{
+   const flag=document.createElement("span");flag.className="garland-flag flag-"+(index%5);flag.textContent=symbol;garland.append(flag);
+  });
+  result.prepend(garland);
+ }
  const trophy=stage.querySelector(".trophy");if(trophy){trophy.classList.add("trophy-bounce");trophy.setAttribute("aria-hidden","true")}
  const heading=stage.querySelector("h2");if(heading)heading.classList.add("celebration-title");
  const message=stage.querySelector(".encouragement-message");if(message)message.classList.add("encouragement-pop");
  const kicker=document.createElement("div");kicker.className="celebration-kicker";kicker.textContent="✦ MISSIONE COMPIUTA! ✦";
  if(result)result.insertBefore(kicker,result.querySelector("h2"));
 }
+
 /* Parole e sillabe: flusso automatico temporizzato, senza conferme */
 const continuousNext=next, continuousFinish=finish, continuousRender=render, continuousRenderResult=renderResult;
 let autoSequenceTimer=null;
