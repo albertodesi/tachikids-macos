@@ -1237,3 +1237,25 @@ main{display:block;padding:6px 0 24px}
     background-position:right 9px center !important;
   }
 }
+
+
+/* Keep the final actions above decorative celebration layers and reliably clickable. */
+.reading-result .result-actions {
+  position:relative !important;
+  z-index:50 !important;
+  isolation:isolate;
+}
+.reading-result .result-actions button {
+  position:relative !important;
+  z-index:51 !important;
+  pointer-events:auto !important;
+  touch-action:manipulation;
+}
+.reading-result>.celebration-confetti {
+  z-index:1 !important;
+  pointer-events:none !important;
+}
+.reading-result>.celebration-garland {
+  z-index:2 !important;
+  pointer-events:none !important;
+}
