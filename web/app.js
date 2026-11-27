@@ -74,7 +74,9 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 async function loadWords(){try{const res=await fetch("./vocabulary/reading-vocabulary-it.json");if(!res.ok)throw Error("fetch");vocabularyEntries=await res.json();if(!vocabularyEntries.length)throw Error("dataset");banks=Array.from({length:10},(_,i)=>vocabularyEntries.filter(x=>x.level===i+1&&isChildSafeWord(x.word)).map(x=>x.word.toUpperCase()));const badge=$("vocabularyStatus");if(badge)badge.textContent=vocabularyEntries.length.toLocaleString("it-IT")+" voci nel catalogo · NVdB + lessico complementare";}catch(e){notify("Vocabolario non disponibile: verifica la connessione.")}}
 if("serviceWorker"in navigator){navigator.serviceWorker.addEventListener("controllerchange",()=>window.location.reload());window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=19").then(reg=>reg.update()).catch(()=>{}));}
 function connection(){const el=$("connection");el.textContent=navigator.onLine?"● Online":"● Offline";el.classList.toggle("off",!navigator.onLine)}window.addEventListener("online",connection);window.addEventListener("offline",connection);connection();
-function showNewProfileFields(){ $("resumeBox").classList.add("hidden"); $("newProfileFields").classList.remove("hidden"); }\nfunction showResumeChoice(){ $("resumeBox").classList.remove("hidden"); $("newProfileFields").classList.add("hidden"); }\nif(restoreProfile()){showResumeChoice();$("resumeName").textContent=state.name;$("resumeToken").textContent=state.profile.token}else{showNewProfileFields()}
+function showNewProfileFields(){ $("resumeBox").classList.add("hidden"); $("newProfileFields").classList.remove("hidden"); }
+function showResumeChoice(){ $("resumeBox").classList.remove("hidden"); $("newProfileFields").classList.add("hidden"); }
+if(restoreProfile()){showResumeChoice();$("resumeName").textContent=state.name;$("resumeToken").textContent=state.profile.token}else{showNewProfileFields()}
 
 // --- Lettura ad alta voce: valutazione adulta + riconoscimento vocale opzionale ---
 Object.assign(state,{readings:[],recognition:null,readStart:null,transcript:"",speechStatus:""});
