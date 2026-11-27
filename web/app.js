@@ -27,7 +27,7 @@ function bank(){
   if(opts.syllables==="5plus"&&count<5)return false;
   if(opts.syllables&&opts.syllables!=="5plus"&&count!==Number(opts.syllables))return false;
   if(opts.pattern&&!patterns.includes(opts.pattern))return false;
-  if(opts.frequency&&x.frequencyBand!==opts.frequency)return false;
+  if(opts.frequency&&!((x.nvdbCategories||[]).includes(opts.frequency)||x.frequencyBand===opts.frequency))return false;
   if(opts.maxLength&&word.length>Number(opts.maxLength))return false;
   return true;
  }).map(x=>x.word.toLocaleUpperCase("it-IT"));
@@ -68,7 +68,7 @@ else{p.goodStreak=0;p.feedback="Buon allenamento: manteniamo questo ritmo e ripr
 saveProfile();renderProfile();}renderResult(completed)}
 function renderResult(completed){const stage=$("stage");const accuracy=state.index?Math.round(state.correct/state.index*100):0;stage.innerHTML='<div class="result"><div class="trophy">🏆</div><h2>'+ (state.gender==="boy"?"BRAVO":"BRAVA")+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Hai completato la tua missione!":"Allenamento terminato!")+'</p><p>Risposte corrette: '+state.correct+' su '+state.index+' ('+accuracy+'%)</p><p>'+escapeHtml(state.profile?.feedback||"Puoi riprendere quando vuoi.")+'</p><button class="primary" id="again">↻ Continua il percorso</button><button class="primary secondary" id="home">⌂ Torna alla home</button></div>';$("again").onclick=()=>$("start").click();$("home").onclick=()=>{renderProfile();show("settings")};$("progress").style.width="100%";$("progressLabel").textContent="Missione conclusa"}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-async function loadWords(){try{const res=await fetch("./vocabulary/reading-vocabulary-it.json");if(!res.ok)throw Error("fetch");vocabularyEntries=await res.json();if(!vocabularyEntries.length)throw Error("dataset");banks=Array.from({length:10},(_,i)=>vocabularyEntries.filter(x=>x.level===i+1&&isChildSafeWord(x.word)).map(x=>x.word.toUpperCase()));const badge=$("vocabularyStatus");if(badge)badge.textContent=vocabularyEntries.length.toLocaleString("it-IT")+" parole nel catalogo · classificazione ortografica automatica";}catch(e){notify("Vocabolario non disponibile: verifica la connessione.")}}
+async function loadWords(){try{const res=await fetch("./vocabulary/reading-vocabulary-it.json");if(!res.ok)throw Error("fetch");vocabularyEntries=await res.json();if(!vocabularyEntries.length)throw Error("dataset");banks=Array.from({length:10},(_,i)=>vocabularyEntries.filter(x=>x.level===i+1&&isChildSafeWord(x.word)).map(x=>x.word.toUpperCase()));const badge=$("vocabularyStatus");if(badge)badge.textContent=vocabularyEntries.length.toLocaleString("it-IT")+" voci nel catalogo · NVdB + lessico complementare";}catch(e){notify("Vocabolario non disponibile: verifica la connessione.")}}
 if("serviceWorker"in navigator){navigator.serviceWorker.addEventListener("controllerchange",()=>window.location.reload());window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=19").then(reg=>reg.update()).catch(()=>{}));}
 function connection(){const el=$("connection");el.textContent=navigator.onLine?"● Online":"● Offline";el.classList.toggle("off",!navigator.onLine)}window.addEventListener("online",connection);window.addEventListener("offline",connection);connection();
 if(restoreProfile()){$("resumeBox").classList.remove("hidden");$("resumeName").textContent=state.name;$("resumeToken").textContent=state.profile.token}
