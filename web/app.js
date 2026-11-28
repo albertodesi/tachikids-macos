@@ -454,3 +454,88 @@ $("generateTable")?.addEventListener("click",()=>{const words=shuffle(bank());co
 /* Liste personali salvate localmente sul dispositivo */
 try{const savedList=localStorage.getItem("tachikids-custom-list-v1");if(savedList&&$("customList"))$("customList").value=savedList}catch{}
 $("customList")?.addEventListener("input",e=>{try{localStorage.setItem("tachikids-custom-list-v1",e.target.value)}catch{}});
+
+
+// --- Modalità Memoria: parola in esposizione e riconoscimento tra quattro alternative ---
+function memoryNext(){
+ clearAutoSequence();cancel();
+ if(state.count&&state.index>=state.count){finish(true);return}
+ state.index++;state.answer=null;state.waiting=false;state.visible=true;
+ const source=bank();
+ if(!state.queue.length)state.queue=shuffle(source);
+ state.current=state.queue.shift();
+ const distractors=shuffle(source.filter(word=>word!==state.current)).slice(0,3);
+ state.choices=shuffle([state.current,...distractors]);
+ render();
+ schedule(()=>{
+  state.visible=false;state.waiting=true;render();
+ },state.exposure);
+}
+function memoryChoose(value){
+ if(state.answer!==null)return;
+ state.answer=value;
+ if(value===state.current)state.correct++;
+ state.sessionResults.push(value===state.current);
+ render();
+}
+function memoryRender(){
+ const total=state.count?" / "+state.count:"";
+ $("progressLabel").textContent=state.name+" · parola "+state.index+total;
+ $("progress").style.width=state.count?Math.min(100,state.index/state.count*100)+"%":"0%";
+ const stage=$("stage");stage.innerHTML="";
+ if(state.visible){
+  const word=document.createElement("div");word.className="stimulus";word.textContent=state.current;
+  word.style.fontSize="min("+state.font+"px, 18vw)";stage.append(word);fitSingleLine(word);return;
+ }
+ if(!state.waiting){const ready=document.createElement("div");ready.className="ready";ready.textContent="Preparati…";stage.append(ready);return}
+ const prompt=document.createElement("div");prompt.className="ready";prompt.textContent="Quale parola hai visto?";stage.append(prompt);
+ const options=document.createElement("div");options.className="options";
+ state.choices.forEach(value=>{
+  const button=document.createElement("button");button.type="button";button.className="option";button.textContent=value;
+  if(state.answer!==null){
+   button.disabled=true;
+   if(value===state.current)button.classList.add("correct");
+   else if(value===state.answer)button.classList.add("wrong");
+  }
+  button.addEventListener("click",()=>memoryChoose(value));options.append(button);fitSingleLine(button,30,14);
+ });
+ stage.append(options);
+ if(state.answer!==null){
+  const feedback=document.createElement("div");feedback.className="feedback";
+  feedback.textContent=state.answer===state.current?"Esatto! ⭐":"Quasi! La parola era "+state.current;
+  feedback.style.color=state.answer===state.current?"#27865b":"#e58a35";stage.append(feedback);
+  const button=document.createElement("button");button.type="button";button.className="next-button";button.textContent="Continua";button.addEventListener("click",memoryNext);stage.append(button);
+ }
+}
+const previousMemoryFinish=finish;
+next=function(){
+ if(state.mode==="memory"){memoryNext();return}
+ if(state.mode==="reading"){continuousNext();return}
+ autoAdvance();
+};
+render=function(){
+ if(state.mode==="memory"){memoryRender();return}
+ if(state.mode==="reading"){continuousRender();return}
+ continuousRender();
+};
+finish=function(completed){
+ if(state.mode!=="memory"){continuousFinish(completed);return}
+ clearAutoSequence();cancel();state.visible=false;state.waiting=false;
+ if(state.index&&state.profile){
+  const accuracy=state.index?Math.round(state.correct/state.index*100):0;
+  state.profile.sessions.push({date:new Date().toISOString(),mode:"memory",level:state.level,total:state.index,correct:state.correct,accuracy,exposure:state.exposure,completed});
+  if(state.profile.sessions.length>100)state.profile.sessions=state.profile.sessions.slice(-100);
+  state.profile.feedback="Memoria: "+state.correct+" risposte corrette su "+state.index+".";
+  saveProfile();renderProfile();
+ }
+ renderResult(completed);
+};
+renderResult=function(completed){
+ if(state.mode!=="memory"){continuousRenderResult(completed);return}
+ const accuracy=state.index?Math.round(state.correct/state.index*100):0;
+ const stage=$("stage");
+ stage.innerHTML='<div class="result"><div class="trophy">🧠🏆</div><h2>'+getEncouragement()+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Missione completata!":"Allenamento terminato!")+'</p><p>Risposte corrette: '+state.correct+' su '+state.index+' ('+accuracy+'%)</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla configurazione</button></div>';
+ addCelebration(stage);
+ $("again").onclick=()=>$("start").click();$("home").onclick=()=>{renderProfile();show("settings")};
+ $("progress").style.width="100%";$("progressLabel").textContent="Memoria completata";
+};
