@@ -457,6 +457,7 @@ $("customList")?.addEventListener("input",e=>{try{localStorage.setItem("tachikid
 
 
 // --- Modalità Memoria: parola in esposizione e riconoscimento tra quattro alternative ---
+const autoNext=next,autoFinish=finish,autoRender=render,autoRenderResult=renderResult;
 function memoryNext(){
  clearAutoSequence();cancel();
  if(state.count&&state.index>=state.count){finish(true);return}
@@ -510,16 +511,14 @@ function memoryRender(){
 const previousMemoryFinish=finish;
 next=function(){
  if(state.mode==="memory"){memoryNext();return}
- if(state.mode==="reading"){continuousNext();return}
- autoAdvance();
+ autoNext();
 };
 render=function(){
  if(state.mode==="memory"){memoryRender();return}
- if(state.mode==="reading"){continuousRender();return}
- continuousRender();
+ autoRender();
 };
 finish=function(completed){
- if(state.mode!=="memory"){continuousFinish(completed);return}
+ if(state.mode!=="memory"){autoFinish(completed);return}
  clearAutoSequence();cancel();state.visible=false;state.waiting=false;
  if(state.index&&state.profile){
   const accuracy=state.index?Math.round(state.correct/state.index*100):0;
@@ -531,7 +530,7 @@ finish=function(completed){
  renderResult(completed);
 };
 renderResult=function(completed){
- if(state.mode!=="memory"){continuousRenderResult(completed);return}
+ if(state.mode!=="memory"){autoRenderResult(completed);return}
  const accuracy=state.index?Math.round(state.correct/state.index*100):0;
  const stage=$("stage");
  stage.innerHTML='<div class="result"><div class="trophy">🧠🏆</div><h2>'+getEncouragement()+', '+escapeHtml(state.name.toUpperCase())+'!</h2><p>'+(completed?"Missione completata!":"Allenamento terminato!")+'</p><p>Risposte corrette: '+state.correct+' su '+state.index+' ('+accuracy+'%)</p><button class="primary" id="again">↻ Nuova sessione</button><button class="primary secondary" id="home">⌂ Torna alla configurazione</button></div>';
